@@ -1,0 +1,8 @@
+---
+description: At the start of every task, read and follow the pstack poteto-mode skill, even when the prompt omits /poteto-mode.
+alwaysApply: true
+---
+
+At the start of every task, read `skills/poteto-mode/SKILL.md` from the installed pstack plugin.
+Follow that skill even when the user message does not contain `/poteto-mode`.
+Match a playbook from that skill.
