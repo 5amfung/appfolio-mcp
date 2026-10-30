@@ -4,3 +4,6 @@ pnpm-lock.yaml
 
 # Upstream API specification
 database-api-openapi.json
+
+# Generated database migrations
+drizzle/

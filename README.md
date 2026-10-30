@@ -64,3 +64,28 @@ ESLint 9 and TypeScript 6.0 satisfy the lint plugins' declared peer ranges.
 Use `@/` to import from `src/`, for example `@/styles.css?url`.
 The mapping is defined in `tsconfig.json`; Vite reads it through
 `resolve.tsconfigPaths`.
+
+## Database (Drizzle + Neon)
+
+Copy `.env.example` to `.env` and set `DATABASE_URL` to your Neon PostgreSQL
+connection string. Keep it server-only; set the same environment variable in
+your deployment environment. Drizzle Kit loads `.env` using dotenv; Vite loads
+it during local development.
+
+Define tables in `src/db/schema.ts`. No application tables are predefined.
+Inside a server function, import `getDb` from `@/db/index.server` and call
+`const db = getDb()`. The client is created lazily, so builds do not require
+database credentials. The Neon HTTP driver supports individual queries and
+non-interactive transactions; interactive transactions require a different driver.
+
+```sh
+pnpm db:generate # Generate SQL migrations after defining tables
+pnpm db:migrate  # Apply migrations to DATABASE_URL
+pnpm db:studio   # Open the database browser
+```
+
+Commit generated `drizzle/` migrations. For disposable development databases,
+`pnpm db:push` applies schema changes directly without migration files.
+Migration, push, and Studio commands need a configured connection string.
+Drizzle ORM and Kit use the release-candidate versions from the Neon guide.
+ESLint enforces `where()` clauses on Drizzle updates and deletes.

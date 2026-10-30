@@ -1,5 +1,6 @@
 import js from '@eslint/js'
 import pluginStart from '@tanstack/eslint-plugin-start'
+import drizzle from 'eslint-plugin-drizzle'
 import prettier from 'eslint-config-prettier/flat'
 import tseslint from 'typescript-eslint'
 
@@ -8,6 +9,7 @@ export default [
     ignores: [
       'node_modules/**',
       'dist/**',
+      'drizzle/**',
       '.tanstack/**',
       'src/routeTree.gen.ts',
     ],
@@ -24,5 +26,13 @@ export default [
       },
     },
   })),
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    plugins: { drizzle },
+    rules: {
+      'drizzle/enforce-delete-with-where': 'error',
+      'drizzle/enforce-update-with-where': 'error',
+    },
+  },
   prettier,
 ]
