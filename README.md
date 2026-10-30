@@ -5,7 +5,10 @@ Vite, Tailwind CSS 4.3, and file-based routing.
 
 ## Development
 
-Use Node.js 24 and pnpm 11.24.0, matching CI.
+Use Node.js 22.22.2+, 24.15.0+, or 26+ and pnpm 11.24.0. These Node.js
+ranges match the current dependencies; Node.js 23 and 25 are unsupported.
+Dependency installation enforces the supported range via `engineStrict` in
+`pnpm-workspace.yaml`.
 
 ```sh
 pnpm install --frozen-lockfile
@@ -30,9 +33,10 @@ TanStack also updates this generated file during development; do not edit it man
 ## GitHub CI and releases
 
 The `CI` workflow runs on pull requests, pushes to `main`, and manual dispatches.
-It uses Node.js 24 and the pnpm version in `package.json`, installs from the frozen
-lockfile, and checks formatting, lint, build, types, and tests. Build runs before
-typecheck to generate the TanStack route types. No application secrets are required.
+It tests Node.js 22.22.2, 24.15.0, and 26 with the pnpm version in `package.json`,
+installs from the frozen lockfile, and checks formatting, lint, build, types, and
+tests. Build runs before typecheck to generate the TanStack route types. No
+application secrets are required.
 
 [Release Please](https://github.com/googleapis/release-please) runs on pushes to
 `main` and manual dispatches. It maintains a release pull request with the next
