@@ -58,3 +58,9 @@ pnpm lint:fix
 ESLint uses the recommended JavaScript, TypeScript, and TanStack Start rules.
 Prettier handles formatting; generated routes and build output are excluded.
 ESLint 9 and TypeScript 6.0 satisfy the lint plugins' declared peer ranges.
+
+## Import aliases
+
+Use `@/` to import from `src/`, for example `@/styles.css?url`.
+The mapping is defined in `tsconfig.json`; Vite reads it through
+`resolve.tsconfigPaths`.

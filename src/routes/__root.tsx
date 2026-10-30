@@ -5,7 +5,7 @@ import {
   createRootRoute,
 } from '@tanstack/react-router'
 
-import stylesUrl from '../styles.css?url'
+import stylesUrl from '@/styles.css?url'
 
 export const Route = createRootRoute({
   head: () => ({
