@@ -47,3 +47,14 @@ pnpm format:check
 Prettier uses `prettier-plugin-tailwindcss` to sort utility classes using
 `src/styles.css`. Generated route and lock files are excluded; ignored build
 artifacts are also skipped.
+
+## Linting
+
+```sh
+pnpm lint
+pnpm lint:fix
+```
+
+ESLint uses the recommended JavaScript, TypeScript, and TanStack Start rules.
+Prettier handles formatting; generated routes and build output are excluded.
+ESLint 9 and TypeScript 6.0 satisfy the lint plugins' declared peer ranges.
