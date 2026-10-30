@@ -9,3 +9,9 @@ Before editing files for a substantial task:
 - Monorepos: when working across packages, run the skill check from the workspace root and prefer the local skill for the package being changed.
 - Multiple matches: prefer the most specific local skill for the package or concern you are changing; load additional skills only when the task spans multiple packages or concerns.
 <!-- intent-skills:end -->
+
+## Cursor Cloud specific instructions
+
+`pnpm dev --host 0.0.0.0 --port 3000` serves the app for agents. Pass Vite flags directly after `pnpm dev`. An extra `--` is forwarded into Vite and drops `--host`, so the server listens on IPv6 localhost only.
+
+The home-page counter and `/mcp-demo` run without `DATABASE_URL`. See the README for install, verification, and Drizzle commands.
