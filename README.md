@@ -102,3 +102,10 @@ The server in `src/mcp-server.ts` registers `get_weather` (static demo data),
 The demo client bypasses HTTP and authentication; it does not test remote auth.
 This scaffold has no authentication and exposes only demonstration content.
 Add authentication and real business tools before connecting private data.
+
+## Forms
+
+TanStack Form is available through `@tanstack/react-form` (`useForm`,
+`createFormHook`, and `formOptions`). The `@tanstack/react-form-start` adapter
+provides server validation helpers for TanStack Start. No global provider is
+required. Import form APIs directly where a form is implemented.
