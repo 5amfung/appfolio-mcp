@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-router'
 
 import stylesUrl from '@/styles.css?url'
+import { PostHogAnalytics } from '@/components/posthog-analytics'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -38,6 +39,7 @@ function RootComponent() {
         <HeadContent />
       </head>
       <body>
+        <PostHogAnalytics />
         <Outlet />
         <Scripts />
       </body>

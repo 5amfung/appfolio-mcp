@@ -157,3 +157,36 @@ TanStack Form is available through `@tanstack/react-form` (`useForm`,
 `createFormHook`, and `formOptions`). The `@tanstack/react-form-start` adapter
 provides server validation helpers for TanStack Start. No global provider is
 required. Import form APIs directly where a form is implemented.
+
+## Analytics (PostHog)
+
+Copy `.env.example` to `.env` if needed, then set `VITE_POSTHOG_KEY` to the public
+project token from [PostHog project settings](https://app.posthog.com/settings/project).
+Set `VITE_POSTHOG_HOST` to your project's ingestion host: `https://us.i.posthog.com`
+(default), `https://eu.i.posthog.com`, or your self-hosted URL. Never use a personal
+API key or an AppFolio credential in a `VITE_` variable: these values are public.
+
+Restart `pnpm dev` after changing these variables. In deployment, set them before
+building and rebuild; Vite embeds them in the browser bundle. With no project
+token, analytics stays disabled and the app still builds and runs.
+
+`src/components/posthog-analytics.tsx` initializes the official browser SDK after
+mounting, so server rendering does not initialize analytics. It tracks the first
+pageview and client-side navigation using `capture_pageview: 'history_change'`.
+Interaction autocapture and session replay are disabled. URL query strings and
+fragments are stripped from event URL/referrer fields, and campaign/referrer
+collection is disabled. Paths are still collected; do not put credentials or
+private business data in paths or custom event properties. The app has no login
+yet, so visitors retain PostHog's anonymous IDs.
+
+To verify delivery, configure your token, run the app, and open `/` and
+`/mcp-demo`. Check for `$pageview` events in PostHog's live
+events view and successful ingestion requests in the browser Network panel.
+Once navigation links are added, also verify pageviews when following those links
+without reloading the document.
+This integration measures browser visits; remote `/api/mcp` calls and server-side
+tool usage are not instrumented.
+
+See the [PostHog JavaScript configuration guide](https://posthog.com/docs/libraries/js/config).
+The SDK brings in `core-js`; its optional postinstall script is explicitly disabled
+in `pnpm-workspace.yaml` so dependency installation remains non-interactive in CI.
