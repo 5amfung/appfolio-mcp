@@ -27,6 +27,19 @@ pnpm typecheck
 Run the build before the first type check to generate `src/routeTree.gen.ts`.
 TanStack also updates this generated file during development; do not edit it manually.
 
+## Tests
+
+```sh
+pnpm test     # Watch mode during development
+pnpm test:run # Run once, including in CI
+```
+
+Vitest uses a separate `vitest.config.ts` with React and jsdom, plus Testing
+Library matchers and automatic cleanup in `src/test/setup.ts`. Place tests beside
+the code as `*.test.ts` or `*.test.tsx`. The index route tests mock the router and
+server-function boundaries, covering rendering, pending updates, and error recovery
+without reading or writing `count.txt`.
+
 ## Structure
 
 - `src/router.tsx`: router factory and registered router types.
