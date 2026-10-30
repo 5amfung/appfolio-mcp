@@ -36,3 +36,14 @@ TanStack also updates this generated file during development; do not edit it man
 - `vite.config.ts`: Tailwind CSS, TanStack Start, and React plugins.
 
 Based on the [TanStack Start build-from-scratch guide](https://tanstack.com/start/latest/docs/framework/react/build-from-scratch).
+
+## Formatting
+
+```sh
+pnpm format
+pnpm format:check
+```
+
+Prettier uses `prettier-plugin-tailwindcss` to sort utility classes using
+`src/styles.css`. Generated route and lock files are excluded; ignored build
+artifacts are also skipped.
