@@ -1,7 +1,7 @@
 # appfolio-mcp
 
 TanStack Start foundation for the AppFolio MCP project, using React, TypeScript,
-Vite, and file-based routing.
+Vite, Tailwind CSS 4.3, and file-based routing.
 
 ## Development
 
@@ -32,6 +32,7 @@ TanStack also updates this generated file during development; do not edit it man
 - `src/router.tsx`: router factory and registered router types.
 - `src/routes/__root.tsx`: HTML document, metadata, and route outlet.
 - `src/routes/index.tsx`: starter route and counter server functions.
-- `vite.config.ts`: TanStack Start and React plugins.
+- `src/styles.css`: global stylesheet and Tailwind CSS import.
+- `vite.config.ts`: Tailwind CSS, TanStack Start, and React plugins.
 
 Based on the [TanStack Start build-from-scratch guide](https://tanstack.com/start/latest/docs/framework/react/build-from-scratch).
