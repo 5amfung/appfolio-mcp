@@ -174,9 +174,11 @@ token, analytics stays disabled and the app still builds and runs.
 mounting, so server rendering does not initialize analytics. It tracks the first
 pageview and client-side navigation using `capture_pageview: 'history_change'`.
 Interaction autocapture and session replay are disabled. URL query strings and
-fragments are stripped from event URL/referrer fields, and campaign/referrer
-collection is disabled. Paths are still collected; do not put credentials or
-private business data in paths or custom event properties. The app has no login
+fragments are stripped from event URL/referrer fields. Campaign/referrer saving
+options are disabled, and derived session attribution fields are removed before
+sending; only the sanitized session entry URL and pathname are retained. Paths are
+still collected; do not put credentials or private business data in paths or
+custom event properties. The app has no login
 yet, so visitors retain PostHog's anonymous IDs.
 
 To verify delivery, configure your token, run the app, and open `/` and
