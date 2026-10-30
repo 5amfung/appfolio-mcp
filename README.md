@@ -89,3 +89,16 @@ Commit generated `drizzle/` migrations. For disposable development databases,
 Migration, push, and Studio commands need a configured connection string.
 Drizzle ORM and Kit use the release-candidate versions from the Neon guide.
 ESLint enforces `where()` clauses on Drizzle updates and deletes.
+
+## MCP scaffold
+
+Run `pnpm dev`. Remote MCP clients connect to `/api/mcp` using Streamable HTTP;
+GET, POST, and DELETE are forwarded to the TanStack MCP server.
+Open `/mcp-demo` for an in-process typed client demonstration.
+
+The server in `src/mcp-server.ts` registers `get_weather` (static demo data),
+`file:///city-guide.md` (an embedded resource, not a disk read), and `trip_brief`
+(a prompt template). No model key, database, or AppFolio credentials are needed.
+The demo client bypasses HTTP and authentication; it does not test remote auth.
+This scaffold has no authentication and exposes only demonstration content.
+Add authentication and real business tools before connecting private data.

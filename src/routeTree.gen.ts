@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as McpDemoRouteImport } from './routes/mcp-demo'
+import { Route as ApiMcpRouteImport } from './routes/api.mcp'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const McpDemoRoute = McpDemoRouteImport.update({
+  id: '/mcp-demo',
+  path: '/mcp-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiMcpRoute = ApiMcpRouteImport.update({
+  id: '/api/mcp',
+  path: '/api/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/mcp-demo': typeof McpDemoRoute
+  '/api/mcp': typeof ApiMcpRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/mcp-demo': typeof McpDemoRoute
+  '/api/mcp': typeof ApiMcpRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/mcp-demo': typeof McpDemoRoute
+  '/api/mcp': typeof ApiMcpRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/mcp-demo' | '/api/mcp'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/mcp-demo' | '/api/mcp'
+  id: '__root__' | '/' | '/mcp-demo' | '/api/mcp'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  McpDemoRoute: typeof McpDemoRoute
+  ApiMcpRoute: typeof ApiMcpRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mcp-demo': {
+      id: '/mcp-demo'
+      path: '/mcp-demo'
+      fullPath: '/mcp-demo'
+      preLoaderRoute: typeof McpDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/mcp': {
+      id: '/api/mcp'
+      path: '/api/mcp'
+      fullPath: '/api/mcp'
+      preLoaderRoute: typeof ApiMcpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  McpDemoRoute: McpDemoRoute,
+  ApiMcpRoute: ApiMcpRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
