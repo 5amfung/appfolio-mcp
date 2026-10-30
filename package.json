@@ -55,5 +55,19 @@
     "typescript-eslint": "^8.72.1",
     "vite": "^8.3.5"
   },
-  "packageManager": "pnpm@11.24.0"
+  "packageManager": "pnpm@11.24.0",
+  "intent": {
+    "skills": [
+      "@tanstack/ai-mcp",
+      "@tanstack/devtools-event-client",
+      "@tanstack/react-router",
+      "@tanstack/react-start",
+      "@tanstack/router-core",
+      "@tanstack/router-plugin",
+      "@tanstack/start-client-core",
+      "@tanstack/start-server-core",
+      "@tanstack/virtual-file-routes",
+      "drizzle-kit"
+    ]
+  }
 }
