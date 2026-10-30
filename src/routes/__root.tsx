@@ -1,5 +1,6 @@
 import {
   HeadContent,
+  Link,
   Outlet,
   Scripts,
   createRootRoute,
@@ -17,7 +18,18 @@ export const Route = createRootRoute({
     ],
   }),
   component: RootComponent,
+  notFoundComponent: NotFound,
 })
+
+function NotFound() {
+  return (
+    <main>
+      <h1>Page not found</h1>
+      <p>The page you requested could not be found.</p>
+      <Link to="/">Return home</Link>
+    </main>
+  )
+}
 
 function RootComponent() {
   return (
