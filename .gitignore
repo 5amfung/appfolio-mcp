@@ -147,3 +147,7 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# TanStack Start generated files and local demo data
+.tanstack/
+count.txt
