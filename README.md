@@ -5,7 +5,7 @@ Vite, Tailwind CSS 4.3, and file-based routing.
 
 ## Development
 
-Use Node.js 22.12+ (or a current supported release) and pnpm 11.24.0.
+Use Node.js 24 and pnpm 11.24.0, matching CI.
 
 ```sh
 pnpm install --frozen-lockfile
@@ -26,6 +26,37 @@ pnpm typecheck
 
 Run the build before the first type check to generate `src/routeTree.gen.ts`.
 TanStack also updates this generated file during development; do not edit it manually.
+
+## GitHub CI and releases
+
+The `CI` workflow runs on pull requests, pushes to `main`, and manual dispatches.
+It uses Node.js 24 and the pnpm version in `package.json`, installs from the frozen
+lockfile, and checks formatting, lint, build, types, and tests. Build runs before
+typecheck to generate the TanStack route types. No application secrets are required.
+
+[Release Please](https://github.com/googleapis/release-please) runs on pushes to
+`main` and manual dispatches. It maintains a release pull request with the next
+`package.json` version and `CHANGELOG.md`; merging that PR creates a `vX.Y.Z` tag
+and GitHub release. The manifest starts at the current package version, `0.1.0`.
+The private application is not published to npm.
+
+Use Conventional Commits in commits merged to `main` (or squash-merge PR titles):
+`fix:` for patches, `feat:` for minor releases, and `feat!:` or a
+`BREAKING CHANGE:` footer for major releases. Routine `chore:` and `docs:` commits
+do not trigger releases on their own.
+
+In repository **Settings → Actions → General → Workflow permissions**, enable
+**Allow GitHub Actions to create and approve pull requests**. The release workflow
+grants write permissions only to its release job.
+
+By default, releases use `GITHUB_TOKEN`. As explained in the
+[Release Please token documentation](https://github.com/googleapis/release-please-action#other-actions-on-release-please-prs),
+PRs and tags created with that token do not trigger other Actions workflows.
+To automatically run CI on release PRs (including when CI is a required check),
+add a repository Actions secret named `RELEASE_PLEASE_TOKEN` containing a
+fine-grained personal access token with repository Contents, Issues, and Pull
+requests read/write access. The workflow uses that secret when present and falls
+back to `GITHUB_TOKEN` otherwise.
 
 ## Tests
 
