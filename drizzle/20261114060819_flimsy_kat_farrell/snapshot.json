@@ -1,0 +1,759 @@
+{
+  "type": "base",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "0a2f9fef-cad2-4a76-96a3-0a8f17cca900",
+  "prevIds": [
+    "00000000-0000-0000-0000-000000000000"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "appfolio_connection"
+      ],
+      "writes": [
+        "s|tbl|public.appfolio_connection",
+        "n|tbl|public.appfolio_connection",
+        "e|tbl|public.appfolio_connection",
+        "n|rel|public.appfolio_connection",
+        "n|type|public.appfolio_connection",
+        "n|rel|public.appfolio_connection_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "appfolio_grant"
+      ],
+      "writes": [
+        "s|tbl|public.appfolio_grant",
+        "n|tbl|public.appfolio_grant",
+        "e|tbl|public.appfolio_grant",
+        "n|rel|public.appfolio_grant",
+        "n|type|public.appfolio_grant",
+        "n|rel|public.appfolio_grant_pkey",
+        "n|rel|public.appfolio_grant_request_hash_key"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "appfolio_retry"
+      ],
+      "writes": [
+        "s|tbl|public.appfolio_retry",
+        "n|tbl|public.appfolio_retry",
+        "e|tbl|public.appfolio_retry",
+        "n|rel|public.appfolio_retry",
+        "n|type|public.appfolio_retry",
+        "n|rel|public.appfolio_retry_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "appfolio_connection",
+        "connection_owner_identity"
+      ],
+      "writes": [
+        "s|idx|public.connection_owner_identity",
+        "n|idx|public.connection_owner_identity",
+        "e|idx|public.connection_owner_identity",
+        "n|rel|public.connection_owner_identity"
+      ],
+      "reads": [
+        "n|tbl|public.appfolio_connection",
+        "n|sch|public",
+        "n|col|public.appfolio_connection.id",
+        "n|col|public.appfolio_connection.user_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "appfolio_connection",
+        "connection_owner"
+      ],
+      "writes": [
+        "s|idx|public.connection_owner",
+        "n|idx|public.connection_owner",
+        "e|idx|public.connection_owner",
+        "n|rel|public.connection_owner"
+      ],
+      "reads": [
+        "n|tbl|public.appfolio_connection",
+        "n|sch|public",
+        "n|col|public.appfolio_connection.user_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "appfolio_grant",
+        "grant_owner"
+      ],
+      "writes": [
+        "s|idx|public.grant_owner",
+        "n|idx|public.grant_owner",
+        "e|idx|public.grant_owner",
+        "n|rel|public.grant_owner"
+      ],
+      "reads": [
+        "n|tbl|public.appfolio_grant",
+        "n|sch|public",
+        "n|col|public.appfolio_grant.user_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "appfolio_grant",
+        "grant_connection"
+      ],
+      "writes": [
+        "s|idx|public.grant_connection",
+        "n|idx|public.grant_connection",
+        "e|idx|public.grant_connection",
+        "n|rel|public.grant_connection"
+      ],
+      "reads": [
+        "n|tbl|public.appfolio_grant",
+        "n|sch|public",
+        "n|col|public.appfolio_grant.connection_id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "appfolio_grant"
+      ],
+      "writes": [
+        "s|fk|public.appfolio_grant.appfolio_grant_connection_id_appfolio_connection_id_fkey",
+        "n|fk|public.appfolio_grant.appfolio_grant_connection_id_appfolio_connection_id_fkey",
+        "e|fk|public.appfolio_grant.appfolio_grant_connection_id_appfolio_connection_id_fkey",
+        "n|con|public.appfolio_grant.appfolio_grant_connection_id_appfolio_connection_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.appfolio_grant",
+        "n|sch|public",
+        "n|tbl|public.appfolio_connection",
+        "n|sch|public",
+        "n|col|public.appfolio_grant.connection_id",
+        "n|col|public.appfolio_connection.id",
+        "e|uniqueness|public.appfolio_connection.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "appfolio_retry"
+      ],
+      "writes": [
+        "s|fk|public.appfolio_retry.appfolio_retry_grant_id_appfolio_grant_id_fkey",
+        "n|fk|public.appfolio_retry.appfolio_retry_grant_id_appfolio_grant_id_fkey",
+        "e|fk|public.appfolio_retry.appfolio_retry_grant_id_appfolio_grant_id_fkey",
+        "n|con|public.appfolio_retry.appfolio_retry_grant_id_appfolio_grant_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.appfolio_retry",
+        "n|sch|public",
+        "n|tbl|public.appfolio_grant",
+        "n|sch|public",
+        "n|col|public.appfolio_retry.grant_id",
+        "n|col|public.appfolio_grant.id",
+        "e|uniqueness|public.appfolio_grant.id"
+      ]
+    }
+  ],
+  "ddl": [
+    {
+      "schema": "public",
+      "name": "appfolio_connection",
+      "isRlsEnabled": false,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "appfolio_grant",
+      "isRlsEnabled": false,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "appfolio_retry",
+      "isRlsEnabled": false,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_connection",
+      "name": "id",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_connection",
+      "name": "user_id",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_connection",
+      "name": "name",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_connection",
+      "name": "credentials",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_connection",
+      "name": "version",
+      "type": "integer",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "1",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_connection",
+      "name": "token",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_connection",
+      "name": "expires_at",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_connection",
+      "name": "lease_id",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_connection",
+      "name": "lease_until",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_connection",
+      "name": "deleted_at",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_connection",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_grant",
+      "name": "id",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_grant",
+      "name": "user_id",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_grant",
+      "name": "connection_id",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_grant",
+      "name": "client_id",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_grant",
+      "name": "client_name",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_grant",
+      "name": "request_hash",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_grant",
+      "name": "session_id",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_grant",
+      "name": "approved_at",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_grant",
+      "name": "revoked_at",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_grant",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_retry",
+      "name": "id",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_retry",
+      "name": "grant_id",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_retry",
+      "name": "operation",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_retry",
+      "name": "fingerprint",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_retry",
+      "name": "body",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_retry",
+      "name": "content_type",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_retry",
+      "name": "upstream_key",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_retry",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_connection",
+      "name": "connection_owner_identity",
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        },
+        {
+          "value": "user_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": true,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "entityType": "indexes"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_connection",
+      "name": "connection_owner",
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "user_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "entityType": "indexes"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_grant",
+      "name": "grant_owner",
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "user_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "entityType": "indexes"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_grant",
+      "name": "grant_connection",
+      "nameExplicit": true,
+      "columns": [
+        {
+          "value": "connection_id",
+          "isExpression": false,
+          "asc": true,
+          "nullsFirst": false,
+          "opclass": null
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "with": "",
+      "method": "btree",
+      "concurrently": false,
+      "entityType": "indexes"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_grant",
+      "name": "appfolio_grant_connection_id_appfolio_connection_id_fkey",
+      "nameExplicit": false,
+      "columns": [
+        "connection_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "appfolio_connection",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "entityType": "fks"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_retry",
+      "name": "appfolio_retry_grant_id_appfolio_grant_id_fkey",
+      "nameExplicit": false,
+      "columns": [
+        "grant_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "appfolio_grant",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "entityType": "fks"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_connection",
+      "name": "appfolio_connection_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_grant",
+      "name": "appfolio_grant_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_retry",
+      "name": "appfolio_retry_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_grant",
+      "name": "appfolio_grant_request_hash_key",
+      "nameExplicit": false,
+      "columns": [
+        "request_hash"
+      ],
+      "nullsNotDistinct": false,
+      "entityType": "uniques"
+    }
+  ]
+}

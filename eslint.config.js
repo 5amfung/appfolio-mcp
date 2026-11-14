@@ -10,6 +10,8 @@ export default [
       'node_modules/**',
       '.agents/**',
       'dist/**',
+      '.output/**',
+      '.vercel/**',
       'drizzle/**',
       '.tanstack/**',
       'src/routeTree.gen.ts',

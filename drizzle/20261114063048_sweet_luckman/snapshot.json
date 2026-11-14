@@ -1,0 +1,195 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "c1345f02-219e-45c0-9abe-e7a6eb53f3c4",
+  "prevIds": [
+    "0a2f9fef-cad2-4a76-96a3-0a8f17cca900"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "appfolio_job"
+      ],
+      "writes": [
+        "s|tbl|public.appfolio_job",
+        "n|tbl|public.appfolio_job",
+        "e|tbl|public.appfolio_job",
+        "n|rel|public.appfolio_job",
+        "n|type|public.appfolio_job",
+        "n|rel|public.appfolio_job_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "appfolio_connection",
+        "jobs_poll_after"
+      ],
+      "writes": [
+        "s|col|public.appfolio_connection.jobs_poll_after",
+        "n|col|public.appfolio_connection.jobs_poll_after",
+        "e|col|public.appfolio_connection.jobs_poll_after"
+      ],
+      "reads": [
+        "n|tbl|public.appfolio_connection",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "appfolio_job"
+      ],
+      "writes": [
+        "s|fk|public.appfolio_job.appfolio_job_grant_id_appfolio_grant_id_fkey",
+        "n|fk|public.appfolio_job.appfolio_job_grant_id_appfolio_grant_id_fkey",
+        "e|fk|public.appfolio_job.appfolio_job_grant_id_appfolio_grant_id_fkey",
+        "n|con|public.appfolio_job.appfolio_job_grant_id_appfolio_grant_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.appfolio_job",
+        "n|sch|public",
+        "n|tbl|public.appfolio_grant",
+        "n|sch|public",
+        "n|col|public.appfolio_job.grant_id",
+        "n|col|public.appfolio_grant.id",
+        "e|uniqueness|public.appfolio_grant.id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "appfolio_job",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "appfolio_connection",
+        "name": "jobs_poll_after",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "appfolio_job",
+        "name": "id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "appfolio_job",
+        "name": "grant_id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "appfolio_job",
+        "name": "upstream_id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "appfolio_job",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "appfolio_job",
+        "name": "appfolio_job_grant_id_appfolio_grant_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "grant_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "appfolio_grant",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "NO ACTION",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "appfolio_job",
+        "name": "appfolio_job_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    }
+  ]
+}
