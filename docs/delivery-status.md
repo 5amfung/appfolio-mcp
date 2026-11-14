@@ -3,7 +3,7 @@
 Application implementation and automated preview verification are ready for
 owner acceptance. Production is paused and must remain so until launch approval.
 
-- PR: https://github.com/5amfung/appfolio-mcp/pull/15, currently draft.
+- PR: https://github.com/5amfung/appfolio-mcp/pull/15, open pending acceptance.
 - Branch: `feat/authenticated-appfolio-mcp`.
 - Application commit: `041b00553dff58eb4ddd6484eac070bbe6a9f6ac`.
 - Tested preview deployment: `dpl_FuTTBpuUeyAPLBp9BZMoZ2xCgq3x`.
@@ -23,13 +23,13 @@ owner acceptance. Production is paused and must remain so until launch approval.
 ## Owner's next step
 
 Run the [client acceptance checklist](client-acceptance.md) in Cursor, Claude Code
-and Codex. Record client versions and results, especially complete catalog
-acceptance, separate connections, automatic renewal and removal. A private
-mode-0600 `/tmp/appfolio-preview-client.env` file supplies the temporary preview
-access cookie for local client configurations. It expires November 14, 2026 at
-10:13 p.m. Pacific. It is not committed and must be kept outside repositories.
-Browser access may also require the owner's Vercel login. Application signup and
-OAuth remain separate and required.
+and Codex, plus the requested ChatGPT Desktop test. Record client versions and
+results, especially complete catalog acceptance, separate connections, automatic
+renewal and removal. The preview hostname is now publicly reachable through an
+alias-specific Deployment Protection Exception. No `APPFOLIO_PREVIEW_COOKIE` or
+Vercel login is needed. Remove old Cookie headers from client entries.
+Application signup, connection selection and OAuth consent remain required.
+Production is still paused; other deployment URLs remain protected.
 
 ## Resume after acceptance
 

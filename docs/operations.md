@@ -17,6 +17,15 @@
 No values belong in source control, screenshots, reports or PR descriptions.
 Production must not inherit test credentials or the preview database/keyring.
 The canonical preview origin is `https://appfolio-mcp-preview.vercel.app`.
+That hostname has a Vercel Deployment Protection Exception for public client
+testing. It needs no Vercel access cookie. The exception applies only to that
+preview alias; production remains paused and other URLs retain their protection.
+Application OAuth and private account/connection checks still apply. To restore
+the platform login requirement, revoke the alias's `alias-protection-override`
+exception, rather than changing application auth or unpausing the project.
+Run `python3 scripts/verify-public-preview.py` to check public discovery,
+application auth enforcement and both production aliases' paused status without
+using any cookies or credentials.
 The final production origin must be established before issuing production grants.
 Changing the origin changes issuer/audience and requires client reauthorization.
 

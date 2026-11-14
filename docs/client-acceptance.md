@@ -1,42 +1,54 @@
-# Coding-agent acceptance
+# Client acceptance
 
 The owner runs these checks in local interactive Cursor, Claude Code and Codex.
 Record each client's exact version, OS, protocol revision, registration method,
 callback URI, configuration name and evidence. Hosted/headless environments are
 separate and remain unverified until explicitly tested.
 
-Use `https://appfolio-mcp-preview.vercel.app/api/mcp`. The preview remains
-protected by Vercel Authentication, independently of application OAuth.
+Use `https://appfolio-mcp-preview.vercel.app/api/mcp`. This preview hostname is
+publicly reachable through a Vercel Deployment Protection Exception. No
+`APPFOLIO_PREVIEW_COOKIE`, Cookie header, bypass link or Vercel login is needed.
+Remove any old Cookie header from existing client entries. Application signup,
+sign-in, explicit connection selection and OAuth consent remain required.
+Production remains paused, and other deployment URLs retain Vercel protection.
 
-For machine access, load the privately supplied `APPFOLIO_PREVIEW_COOKIE` into
-the environment of the local client. It contains only a temporary, preview-scoped
-Vercel access cookie, expires after 23 hours, and does not authorize AppFolio or
-replace application OAuth. Keep the file outside repositories and do not paste
-its value into chat, screenshots, or committed configuration. Browser sign-in to
-Vercel may also be required during OAuth. Remove this header for public production.
+## ChatGPT Desktop
 
-Cursor remote-server entry, using its documented environment interpolation:
+Add a custom MCP server in ChatGPT's Plugins settings. Use the URL above and
+choose OAuth authentication with automatic client registration. Do not enter
+AppFolio credentials as ChatGPT's OAuth client ID or secret. Those credentials
+belong in the application's connection form after sign-in.
+
+Complete sign-in, select the designated AppFolio test connection and allow
+access. Review the discovered tools, then start a new conversation with this
+connection selected. First request a bounded work-order read without writes.
+Record the Desktop version, authorization result, tool discovery and read result.
+Actual ChatGPT Desktop behavior remains pending the owner's test.
+
+See the [official custom MCP setup instructions](https://developers.openai.com/plugins/deploy/connect-chatgpt#add-the-mcp-server).
+
+## Coding agents
+
+Cursor remote-server entry:
 
 ```json
 {
   "mcpServers": {
     "appfolio-preview": {
-      "url": "https://appfolio-mcp-preview.vercel.app/api/mcp",
-      "headers": { "Cookie": "${env:APPFOLIO_PREVIEW_COOKIE}" }
+      "url": "https://appfolio-mcp-preview.vercel.app/api/mcp"
     }
   }
 }
 ```
 
-Claude Code HTTP entry, using its documented environment-variable expansion:
+Claude Code HTTP entry:
 
 ```json
 {
   "mcpServers": {
     "appfolio-preview": {
       "type": "http",
-      "url": "https://appfolio-mcp-preview.vercel.app/api/mcp",
-      "headers": { "Cookie": "${APPFOLIO_PREVIEW_COOKIE}" }
+      "url": "https://appfolio-mcp-preview.vercel.app/api/mcp"
     }
   }
 }
@@ -44,22 +56,20 @@ Claude Code HTTP entry, using its documented environment-variable expansion:
 
 Codex local HTTP entry:
 
-The configuration below uses the pending default-scope update. The pinned
-preview has not received that update while the Vercel project is paused. Until
-it is redeployed, that preview still needs
-`scopes = ["mcp:tools", "offline_access"]` in the Codex server entry.
+The pinned preview has not received the default-scope update while the Vercel
+project is paused. Until it is redeployed, this preview still needs the scopes
+setting below for automatic token renewal. This is unrelated to Vercel access.
 
 ```toml
 [mcp_servers.appfolio-preview]
 url = "https://appfolio-mcp-preview.vercel.app/api/mcp"
-env_http_headers = { Cookie = "APPFOLIO_PREVIEW_COOKIE" }
+scopes = ["mcp:tools", "offline_access"]
 ```
 
-Start each client with that environment variable available. Then authorize the
-server through its normal OAuth UI. The server advertises `mcp:tools` and
-`offline_access` as its default scopes, so Codex needs no `scopes` configuration
-or `--scopes` login argument. These scopes enable tool access and automatic
-token renewal after consent. For another connection, add a second server name
+Authorize the server through its normal OAuth UI. The pending server update
+advertises `mcp:tools` and `offline_access` as its default scopes, removing the
+need for Codex's explicit scopes setting once deployed. These scopes enable tool
+access and automatic token renewal after consent. For another connection, add a second server name
 and complete a separate authorization.
 These configuration forms were checked against current official documentation;
 the actual installed-client flows still need the owner's acceptance.
@@ -98,10 +108,11 @@ These are setup starting points, not claims of observed compatibility.
 11. Check a file upload, a bulk request, an asynchronous job and a deprecated tool
     in the test environment where practical. Label unavailable live checks.
 
-| Client      | Browser auth | All tools | Read/write | Renewal | Removal | Two connections |
-| ----------- | ------------ | --------- | ---------- | ------- | ------- | --------------- |
-| Cursor      | Pending      | Pending   | Pending    | Pending | Pending | Pending         |
-| Claude Code | Pending      | Pending   | Pending    | Pending | Pending | Pending         |
-| Codex       | Pending      | Pending   | Pending    | Pending | Pending | Pending         |
+| Client          | Browser auth | All tools | Read/write | Renewal | Removal | Two connections |
+| --------------- | ------------ | --------- | ---------- | ------- | ------- | --------------- |
+| Cursor          | Pending      | Pending   | Pending    | Pending | Pending | Pending         |
+| Claude Code     | Pending      | Pending   | Pending    | Pending | Pending | Pending         |
+| Codex           | Pending      | Pending   | Pending    | Pending | Pending | Pending         |
+| ChatGPT Desktop | Pending      | Pending   | Pending    | Pending | Pending | Pending         |
 
 Production launch remains blocked until required verification and owner acceptance.

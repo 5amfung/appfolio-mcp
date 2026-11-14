@@ -136,3 +136,25 @@ refresh tokens. No AppFolio records were mutated in this follow-up.
 
 The default-scope update awaits deployment because the project pause blocks
 new previews. The pinned preview above still has the previous advertisement.
+
+## Public preview for ChatGPT Desktop
+
+At the owner's request, `appfolio-mcp-preview.vercel.app` now has an alias-specific
+Deployment Protection Exception, created with the `alias-protection-override`
+scope. This removes the Vercel cookie/login requirement for that hostname only.
+The deployed build, auth policy, secrets and database configuration were not changed.
+
+Without a Vercel cookie, the preview serves `/ping` and sign-in with HTTP 200,
+serves both OAuth discovery documents, and returns application HTTP 401 for MCP
+and private account requests. Discovery identifies the preview issuer, dynamic
+client registration, S256 PKCE and authorization-code/refresh grants. Headless Chromium
+passed signup, sign-in, connection creation, explicit selection, consent and the
+state-preserving callback without a Vercel cookie. Connection validation used
+only the designated AppFolio test environment; no AppFolio records were mutated.
+
+Both production aliases still return HTTP 503 with `DEPLOYMENT_PAUSED`. The
+underlying preview deployment URL still redirects to Vercel Authentication.
+Reproduce the public-access checks with
+`python3 scripts/verify-public-preview.py`. Actual ChatGPT Desktop authorization,
+tool discovery, reads and renewal remain pending owner verification. The pinned
+preview still has the older scope advertisement described above.
