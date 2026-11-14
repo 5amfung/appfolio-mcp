@@ -157,7 +157,7 @@ Reproduce the public-access checks with
 `python3 scripts/verify-public-preview.py`. Actual ChatGPT Desktop authorization,
 tool discovery, reads and renewal remain pending owner verification.
 
-## Current preview deployment
+## Preview deployment before the tool-documentation update
 
 Deployed commit: `913c336fb916dcc569064243021b8d3201920456`.
 Project: `appfolio-mcp-preview`, `prj_YE82rvGwzErSdP5xEm2EzuAG68se`.
@@ -187,3 +187,32 @@ The public-access script passed on the new deployment, and both original
 production aliases still returned `503 DEPLOYMENT_PAUSED`. GitHub CI passed all
 three Node versions and 213 tests on the deployed commit. Actual client acceptance
 is still pending the owner.
+
+## Current preview and agent-facing documentation
+
+Deployed code commit: `0116fb17662586250108d8ec98a68b191a59e5aa`.
+Deployment: `dpl_8zUgpR7Ep6SRACnSv5oU58rwmUfD`, project `appfolio-mcp-preview`,
+target `staging`, state `READY`. Canonical URL remains
+https://appfolio-mcp-preview.vercel.app. The existing preview origin and
+configuration were preserved. Production remains paused.
+
+The metadata fix is in https://github.com/5amfung/appfolio-mcp/pull/16, targeting
+the authenticated implementation branch. Local validation passed 223 tests,
+build, typecheck, lint, formatting and catalog freshness. GitHub CI passed on
+Node 22, 24 and 26 for the deployed code commit.
+
+Ten documentation regressions exercise the real MCP protocol handler and inspect
+all 181 tool descriptors, including named input help, compositions, examples,
+uploads and retry keys. Published input examples validate with the same AJV
+configuration used at runtime. Forty-one incompatible source annotations are
+omitted with operation/schema-location audit records. The supplied OpenAPI is
+unchanged. An independent comparison found zero acceptance differences across
+6,844 sampled old/new validation cases. A fresh agent constructed read, create,
+upload and update calls using only the published descriptors.
+
+After assigning the preview alias, `scripts/verify-public-preview.py` passed
+public availability, both discovery documents, required scopes and PKCE,
+authentication enforcement, canonical issuer/resource values and both production
+pause checks. No live business calls, account changes or migrations were needed.
+The earlier live AppFolio and browser evidence above belongs to its recorded
+build and is not a claim of new authenticated client acceptance for this update.
