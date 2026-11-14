@@ -12,3 +12,9 @@ drizzle/
 # Installed skills and tooling-managed instructions
 .agents/
 AGENTS.md
+
+# Reproducible Python-generated operation catalog
+src/appfolio/catalog.json
+.output/
+.vercel/
+docs/operation-coverage.md

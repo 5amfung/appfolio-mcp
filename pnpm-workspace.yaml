@@ -1,3 +1,16 @@
 allowBuilds:
   core-js: false
+  esbuild: true
 engineStrict: true
+minimumReleaseAgeExclude:
+  - '@better-auth/cimd@1.7.23'
+  - '@better-auth/core@1.7.23'
+  - '@better-auth/drizzle-adapter@1.7.23'
+  - '@better-auth/kysely-adapter@1.7.23'
+  - '@better-auth/mcp@1.7.23'
+  - '@better-auth/memory-adapter@1.7.23'
+  - '@better-auth/mongo-adapter@1.7.23'
+  - '@better-auth/oauth-provider@1.7.23'
+  - '@better-auth/prisma-adapter@1.7.23'
+  - '@better-auth/telemetry@1.7.23'
+  - better-auth@1.7.23
