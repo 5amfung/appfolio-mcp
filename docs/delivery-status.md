@@ -54,3 +54,13 @@ injection remain unverified, with automated failure/coordination tests in place.
 No proactive alerts were added. Test AppFolio inventory locations remain because
 the contract has no deletion endpoint for them. Isolated verification accounts
 and their application/provider credentials were cleaned up after tests.
+
+## Current deployment-check state
+
+The owner-approved project pause also blocks creation of new preview deployments.
+The documentation-only PR head therefore has a blocked Vercel deployment check;
+all three GitHub CI jobs pass. The stable preview alias remains pinned to the
+successfully tested application deployment above, which remains accessible.
+Do not forge a successful deployment status or unpause merely to clear this gate.
+When resuming release preparation, account for this platform behavior and obtain
+the owner's launch decision before restoring production availability.

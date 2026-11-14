@@ -112,3 +112,8 @@ The corrected preview was re-verified after the production pause. All deployed
 server and browser checks passed, including the `Idempotent-Replayed` marker.
 CI passed on the application commit above. Remaining PR-head changes are only
 verification evidence and handoff documentation.
+
+The project pause blocks new Vercel builds, including the subsequent documentation
+commit's automatic preview. Its Vercel check is intentionally blocked by the
+platform pause; GitHub CI passes on all three Node versions. The pinned, tested
+preview stays available. This is a release-policy gate, not a code-check failure.
