@@ -29,6 +29,28 @@ using any cookies or credentials.
 The final production origin must be established before issuing production grants.
 Changing the origin changes issuer/audience and requires client reauthorization.
 
+## Preview deployment target
+
+Use project `appfolio-mcp-preview` (`prj_YE82rvGwzErSdP5xEm2EzuAG68se`) in team
+`doughyrematch` for preview deployments. Keep `appfolio-mcp`
+(`prj_oYPjnMTgWJveoQesbkD92RaYPBiN`) paused until launch approval. Its pause also
+blocks new preview builds, which is why these projects are separate.
+
+The preview project has only Preview-scoped application variables, copied from
+the existing isolated test configuration. Its production configuration is empty,
+and automatic production domain assignment is disabled. Vercel labelled its first
+bootstrap build as production despite a staging request; that build is protected,
+has no production application configuration and does not own the canonical preview
+URL. The tested deployment is the subsequent `staging` target. Do not promote the
+bootstrap build or populate this test project's production environment.
+
+Verify the exact commit and Preview target before assigning the canonical alias.
+Keep `BETTER_AUTH_URL=https://appfolio-mcp-preview.vercel.app`; the alias keeps OAuth
+issuer/resource values stable. Run public-access and real-server read-only checks
+after alias assignment. Existing preview accounts and encrypted connections remain
+on the same isolated Neon branch. The local ignored `.vercel/project.json` now
+links to this preview project; check the link before any CLI deployment.
+
 ## Encryption and recovery
 
 Every encrypted envelope records its key ID, random IV, authentication tag and

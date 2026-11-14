@@ -5,15 +5,17 @@ owner acceptance. Production is paused and must remain so until launch approval.
 
 - PR: https://github.com/5amfung/appfolio-mcp/pull/15, open pending acceptance.
 - Branch: `feat/authenticated-appfolio-mcp`.
-- Application commit: `041b00553dff58eb4ddd6484eac070bbe6a9f6ac`.
-- Tested preview deployment: `dpl_FuTTBpuUeyAPLBp9BZMoZ2xCgq3x`.
+- Deployed commit: `913c336fb916dcc569064243021b8d3201920456`.
+- Tested preview deployment: `dpl_6MG4p8ZQ9jD3tBpB7skx161HDrdD`, target `staging`.
+- Preview project: `appfolio-mcp-preview`, `prj_YE82rvGwzErSdP5xEm2EzuAG68se`.
+- Paused production project: `appfolio-mcp`, `prj_oYPjnMTgWJveoQesbkD92RaYPBiN`.
 - Canonical preview: https://appfolio-mcp-preview.vercel.app.
 - Preview Neon branch: `br-bitter-water-bfiixu0l`.
 - Provisioned production branch remains `br-aged-bread-bf42fykn`; no migrations
   or test mutations were run there. Production secrets are not configured.
 - All 181 operations have tools, input/response schemas and contract fixtures.
-- 212 tests, build, types, lint, formatting, catalog freshness and the three-node
-  GitHub CI matrix pass on the application commit.
+- 213 tests, build, types, lint, formatting, catalog freshness and the three-node
+  GitHub CI matrix pass on the deployed commit.
 - Real deployed account, OAuth, tool discovery, read/write/replay/read-back,
   refresh, revocation, deletion and password flows pass.
 - Deployed browser account and OAuth flows pass in headless Chromium.
@@ -57,17 +59,20 @@ and their application/provider credentials were cleaned up after tests.
 
 ## Current deployment-check state
 
-The owner-approved project pause also blocks creation of new preview deployments.
-Subsequent PR heads therefore have a blocked Vercel deployment check.
-The stable preview alias remains pinned to the
-successfully tested application deployment above, which remains accessible.
-Do not forge a successful deployment status or unpause merely to clear this gate.
-When resuming release preparation, account for this platform behavior and obtain
-the owner's launch decision before restoring production availability.
+The owner-approved pause blocks new builds on the production project, including
+preview targets. A separate preview project now hosts the tested build above.
+The canonical preview alias was moved there, retaining its public-access exception.
+Only the existing preview configuration was copied, scoped to Preview. The origin,
+isolated Neon branch, auth secret and keyring are unchanged. The original project
+remains paused; neither production configuration nor production traffic was changed.
 
-The pending scope-discovery update makes `mcp:tools` and `offline_access` the
-advertised defaults, removing the need for a Codex scopes setting. It passes
-213 automated tests and the built-server login/read/refresh/removal sequence
-using discovered scopes. It has not reached the pinned preview; that deployment
-still needs an explicit Codex scopes setting until it is replaced. See
-`verification.md` for the separate local and deployed evidence.
+The deployed scope update advertises `mcp:tools` and `offline_access` by default.
+Codex needs no scopes setting. Without a Vercel cookie, the new deployment passed
+login, explicit connection selection, consent, PKCE, all 181 tools, a work-order
+read, refresh, refreshed tool access and removal. Browser OAuth also passed.
+Both production aliases still return `503 DEPLOYMENT_PAUSED`.
+
+The original project's deployment checks can remain blocked by its pause. Do not
+forge statuses or unpause it to clear those checks. Future previews should target
+the preview project above. Obtain the owner's launch decision before restoring
+production availability. See `verification.md` for deployment evidence.

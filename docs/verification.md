@@ -61,7 +61,7 @@ The Vite dev server returned an empty HTTP 400 for a streamed call immediately
 following discovery. The same sequence succeeds on the built Nitro server.
 Production-build and deployed tests are the acceptance evidence.
 
-## Deployed preview evidence
+## Initial deployed preview evidence
 
 Preview application build: `041b00553dff58eb4ddd6484eac070bbe6a9f6ac`.
 Deployment: `dpl_FuTTBpuUeyAPLBp9BZMoZ2xCgq3x`.
@@ -110,8 +110,8 @@ and launch acceptance are complete.
 
 The corrected preview was re-verified after the production pause. All deployed
 server and browser checks passed, including the `Idempotent-Replayed` marker.
-CI passed on the application commit above. The scope-discovery follow-up below
-has not yet been deployed to this preview.
+CI passed on the initial application commit above. The later scope update was
+subsequently deployed to the separate preview project described below.
 
 The project pause blocks new Vercel builds, including the subsequent documentation
 commit's automatic preview. Its Vercel check is intentionally blocked by the
@@ -134,8 +134,7 @@ access and refresh tokens, read work orders, rotated tokens, and discovered all
 181 tools using the renewed access token. Removal rejected old access and
 refresh tokens. No AppFolio records were mutated in this follow-up.
 
-The default-scope update awaits deployment because the project pause blocks
-new previews. The pinned preview above still has the previous advertisement.
+The default-scope update is now deployed on the separate preview project below.
 
 ## Public preview for ChatGPT Desktop
 
@@ -156,5 +155,35 @@ Both production aliases still return HTTP 503 with `DEPLOYMENT_PAUSED`. The
 underlying preview deployment URL still redirects to Vercel Authentication.
 Reproduce the public-access checks with
 `python3 scripts/verify-public-preview.py`. Actual ChatGPT Desktop authorization,
-tool discovery, reads and renewal remain pending owner verification. The pinned
-preview still has the older scope advertisement described above.
+tool discovery, reads and renewal remain pending owner verification.
+
+## Current preview deployment
+
+Deployed commit: `913c336fb916dcc569064243021b8d3201920456`.
+Project: `appfolio-mcp-preview`, `prj_YE82rvGwzErSdP5xEm2EzuAG68se`.
+Deployment: `dpl_6MG4p8ZQ9jD3tBpB7skx161HDrdD`, target `staging`, state `READY`.
+Canonical URL: https://appfolio-mcp-preview.vercel.app.
+
+A manual staging request on the original project was blocked by its pause.
+The new preview project uses the seven existing Preview-scoped variables,
+with the same isolated database, auth secret, keyring and canonical origin.
+No production configuration was copied or added. Automatic production domain
+assignment is disabled. Vercel labelled the new project's first bootstrap build
+`production`; it is protected, has no production application configuration and
+does not own the canonical preview URL. The verified deployment above is the
+subsequent explicit staging target. The original production project remains paused.
+
+Without any Vercel cookie or client-supplied scope override, the real-server
+script passed discovery of both default scopes, DCR registration defaults,
+signup, private connection creation, explicit selection, consent, PKCE token
+exchange, all 181 tools, a live work-order read, refresh rotation and discovery
+using the refreshed token. Grant removal rejected existing access and refresh
+tokens. Connection deletion and password checks passed. Headless Chromium also
+passed accounts/passwords and browser OAuth through the state-preserving callback.
+Only the designated AppFolio test connection was used; no AppFolio records were
+mutated during this redeployment verification.
+
+The public-access script passed on the new deployment, and both original
+production aliases still returned `503 DEPLOYMENT_PAUSED`. GitHub CI passed all
+three Node versions and 213 tests on the deployed commit. Actual client acceptance
+is still pending the owner.

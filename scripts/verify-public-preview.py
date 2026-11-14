@@ -40,8 +40,10 @@ def main():
     resource = base + '/api/mcp'
     status, headers, _ = request(resource)
     metadata_url = base + '/.well-known/oauth-protected-resource/api/mcp'
-    check(status == 401 and f'resource_metadata="{metadata_url}"' in headers.get('WWW-Authenticate', ''),
-          'unauthenticated MCP requests require application OAuth')
+    challenge = headers.get('WWW-Authenticate', '')
+    check(status == 401 and f'resource_metadata="{metadata_url}"' in challenge
+          and 'scope="mcp:tools offline_access"' in challenge,
+          'application OAuth advertises default tool and renewal scopes')
     status, _, _ = request(base + '/api/account')
     check(status == 401, 'account data requires an application session')
 

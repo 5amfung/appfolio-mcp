@@ -56,21 +56,16 @@ Claude Code HTTP entry:
 
 Codex local HTTP entry:
 
-The pinned preview has not received the default-scope update while the Vercel
-project is paused. Until it is redeployed, this preview still needs the scopes
-setting below for automatic token renewal. This is unrelated to Vercel access.
-
 ```toml
 [mcp_servers.appfolio-preview]
 url = "https://appfolio-mcp-preview.vercel.app/api/mcp"
-scopes = ["mcp:tools", "offline_access"]
 ```
 
-Authorize the server through its normal OAuth UI. The pending server update
-advertises `mcp:tools` and `offline_access` as its default scopes, removing the
-need for Codex's explicit scopes setting once deployed. These scopes enable tool
-access and automatic token renewal after consent. For another connection, add a second server name
-and complete a separate authorization.
+Authorize the server through its normal OAuth UI. The deployed server advertises
+`mcp:tools` and `offline_access` as its default scopes. No explicit scopes setting
+is needed. These scopes enable tool access and automatic token renewal after
+consent. For another connection, add a second server name and complete a separate
+authorization.
 These configuration forms were checked against current official documentation;
 the actual installed-client flows still need the owner's acceptance.
 
