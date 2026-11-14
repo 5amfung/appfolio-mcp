@@ -5,10 +5,56 @@ Record each client's exact version, OS, protocol revision, registration method,
 callback URI, configuration name and evidence. Hosted/headless environments are
 separate and remain unverified until explicitly tested.
 
-Use the canonical preview `/api/mcp` URL. A Vercel-protected preview may require an
-automation bypass header for machine requests. Application OAuth remains required.
-Never commit a bypass credential. Final public production MCP access must not be
-blocked by an infrastructure sign-in screen.
+Use `https://appfolio-mcp-preview.vercel.app/api/mcp`. The preview remains
+protected by Vercel Authentication, independently of application OAuth.
+
+For machine access, load the privately supplied `APPFOLIO_PREVIEW_COOKIE` into
+the environment of the local client. It contains only a temporary, preview-scoped
+Vercel access cookie, expires after 23 hours, and does not authorize AppFolio or
+replace application OAuth. Keep the file outside repositories and do not paste
+its value into chat, screenshots, or committed configuration. Browser sign-in to
+Vercel may also be required during OAuth. Remove this header for public production.
+
+Cursor remote-server entry, using its documented environment interpolation:
+
+```json
+{
+  "mcpServers": {
+    "appfolio-preview": {
+      "url": "https://appfolio-mcp-preview.vercel.app/api/mcp",
+      "headers": { "Cookie": "${env:APPFOLIO_PREVIEW_COOKIE}" }
+    }
+  }
+}
+```
+
+Claude Code HTTP entry, using its documented environment-variable expansion:
+
+```json
+{
+  "mcpServers": {
+    "appfolio-preview": {
+      "type": "http",
+      "url": "https://appfolio-mcp-preview.vercel.app/api/mcp",
+      "headers": { "Cookie": "${APPFOLIO_PREVIEW_COOKIE}" }
+    }
+  }
+}
+```
+
+Codex local HTTP entry:
+
+```toml
+[mcp_servers.appfolio-preview]
+url = "https://appfolio-mcp-preview.vercel.app/api/mcp"
+env_http_headers = { Cookie = "APPFOLIO_PREVIEW_COOKIE" }
+```
+
+Start each client with that environment variable available. Then authorize the
+server through its normal OAuth UI, using `mcp:tools offline_access`. For another
+connection, add a second server name and complete a separate authorization.
+These configuration forms were checked against current official documentation;
+the actual installed-client flows still need the owner's acceptance.
 
 Official setup references, to recheck against the installed client version:
 

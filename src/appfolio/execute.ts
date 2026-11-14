@@ -85,9 +85,9 @@ export async function execute(
     let { bytes, contentType } = serializeBody(op, input)
     const mutation = ['POST', 'PUT', 'PATCH'].includes(op.method)
     if (mutation) {
-      key = input.idempotencyKey ?? randomUUID()
+      key = input.idempotencyKey || randomUUID()
       const id = createHash('sha256')
-        .update(identity.grantId + ':' + key)
+        .update(identity.grantId + ':' + new URL(url).pathname + ':' + key)
         .digest('hex')
       const fingerprint = createHash('sha256')
         .update(
@@ -121,7 +121,7 @@ export async function execute(
         saved.grantId !== identity.grantId ||
         saved.fingerprint !== fingerprint
       )
-        throw new AppError('idempotency_payload_mismatch', 409)
+        throw new AppError('idempotency_payload_mismatch', 422)
       if (saved.createdAt.getTime() < Date.now() - 24 * 60 * 60 * 1000)
         throw new AppError(
           'idempotency_key_expired_confirm_before_new_operation',
@@ -185,6 +185,8 @@ export async function execute(
       idempotencyKey: key,
       upstreamStatus: response.status,
       retryAfter: response.headers.get('Retry-After'),
+      idempotentReplayed:
+        response.headers.get('Idempotent-Replayed') === 'true',
       correlationId: identity.correlationId,
     }
     const result = { status: response.status, data, metadata }
@@ -222,6 +224,7 @@ export async function execute(
           type: 'text' as const,
           text: JSON.stringify({
             error: category,
+            status: error instanceof AppError ? error.status : 500,
             idempotencyKey: key,
             upstreamStatus,
             correlationId: identity.correlationId,

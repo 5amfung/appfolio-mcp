@@ -19,7 +19,7 @@ assuming the brief is satisfied by compilation or an operation inventory.
   signed consent, PKCE code exchange, all 181 tools discovered, live work-order
   retrieval, refresh rotation, removal, rejection of old access and refresh
   tokens, connection deletion and password confirmation/change.
-- All 209 automated tests pass, including per-operation execution and upstream
+- All 212 automated tests pass, including per-operation execution and upstream
   error fixtures, exact JSON/multipart retry bytes, async job grant isolation,
   polling bounds, shared token acquisition, and exporter-failure isolation.
 - Headless Chromium passed signup, password mismatch feedback/change/field
@@ -42,12 +42,11 @@ failed runs can leave test-only connections that the owner can remove later.
 
 - Live upload, bulk and async checks in the designated test database where feasible.
   Those operations currently have contract-level success/error evidence.
-- Deployed preview account/OAuth/read/write/renewal/removal checks and cold starts.
-- PostHog deployed success/failure/removal/deletion records and cold-start delivery.
-  Project has no configured logs override; documented default retention is 14 days.
-  No paid custom retention or application sampling is enabled.
+- Actual deployed exporter-outage and cross-instance race injection remain
+  unverified; the suite covers exporter failure and durable coordination semantics.
+  Project has no log-retention override; documented default is 14 days.
 - Manual client tests in Cursor, Claude Code and Codex.
-- Full build, lint, formatting, type, test and GitHub CI results on the final commit.
+- GitHub CI must remain passing on the final documentation/tooling commit.
 - Owner's launch acceptance, separate production configuration and staged release.
 
 ## Reproduce
@@ -62,11 +61,37 @@ The Vite dev server returned an empty HTTP 400 for a streamed call immediately
 following discovery. The same sequence succeeds on the built Nitro server.
 Production-build and deployed tests are the acceptance evidence.
 
-## Preview protection
+## Deployed preview evidence
 
-Automatic approval review rejected creating an automation bypass credential as
-persistent privileged access outside the explicitly approved security scope.
-No bypass credential was created and infrastructure protection remains enabled.
-Continue read-only deployment checks and owner browser verification. Full automated
-preview flows require either explicit approval for that credential or a supported
-existing authenticated test path; do not work around the rejection.
+Preview application build: `d40726b17e45942eccdb0cda6ee65a3b9f0b1ee9`.
+Deployment: `dpl_2AnNZc8xtvc8kN3dSrsUxAJw5p64`.
+Canonical URL: https://appfolio-mcp-preview.vercel.app.
+
+The deployed server passed the full real-server read/write sequence: accounts,
+private connection creation, secret-free settings, DCR, explicit selection,
+signed consent, PKCE, all 181 tools, work-order read, idempotent inventory-location
+creation/replay/update/read-back, refresh, removal, rejection of old access and
+refresh, connection deletion, and password confirmation/change. Headless Chromium
+also passed accounts/passwords and OAuth from login through connection creation,
+selection, consent and callback against this deployed preview.
+
+PostHog contains preview-labelled success, write, removal, rejected-grant and
+connection-deletion records with correlation IDs, severity and duration. A Vercel
+runtime error/fatal scan for this deployment returned no records. Application logs
+were inspected separately in PostHog; no credentials or bodies were present.
+
+GitHub CI passed all three Node versions: 22.22.2, 24.15.0 and 26. The 212-test
+suite, build, lint, formatting, types and catalog checks passed. A final idempotency conformance correction broadens printable-key support, scopes
+keys by request path and preserves replay markers. The current PR head and its
+updated preview must pass CI and deployed replay checks before handoff.
+
+Automatic approval review initially rejected a persistent project-wide bypass
+credential. The owner subsequently approved a temporary preview-specific access
+link expiring after 23 hours. Production protection was unchanged. Explicit test
+access was revoked after use; a fresh temporary client access file was prepared
+privately for the owner's manual client tests. No access credential is committed.
+
+Verification accounts, their provider sessions/tokens and their custom connection,
+grant, job and retry records were removed from the isolated Neon branch. AppFolio
+test inventory locations remain because the upstream contract has no delete
+operation for that resource. No production database was mutated.

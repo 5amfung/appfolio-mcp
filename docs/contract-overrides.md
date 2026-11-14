@@ -17,8 +17,11 @@ OAuth override. Contract tests exercise every generated operation.
 
 Validation of a new or changed connection includes token acquisition and a
 minimal, read-only work-order request with its database and developer headers.
-A credential set must permit that probe. An unsuccessful probe preserves the
-existing saved connection. This prerequisite is shown in connection settings.
+A 403 probe is inconclusive because credentials may intentionally lack
+work-order permission, so it does not reject a valid OAuth connection. Other
+probe failures preserve the existing saved connection. Each actual operation
+remains subject to upstream permission checks; saving a connection does not
+promise access to every tool.
 
 Calls return one page, at most 2 MiB of response data, with a 20-second upstream
 request deadline. Multipart requests are at most 2 MiB and inbound MCP JSON is at
@@ -46,3 +49,11 @@ The catalog retains `bulkCreateBill`, `bulkCreateCharge` and
 are `bulkCreateBillAsync`, `bulkCreateChargeAsync` and
 `putBulkUnitPricingMatrixAsync`. Accepted asynchronous requests require a later
 `getjobs` call; an accepted job is not a completed write.
+
+The idempotency adapter accepts the contract's full 0–256 printable ASCII key
+range. Empty input behaves like an omitted key. Caller keys are scoped by grant
+and request path, so the same string can be used on different endpoints. Mutation
+responses preserve `Idempotent-Replayed` as `metadata.idempotentReplayed` and
+`Retry-After` as `metadata.retryAfter`. Documented global idempotency error statuses
+400, 409 and 422 are supported even where an operation's response list omits them.
+A local payload mismatch uses status 422 and never sends changed bytes upstream.

@@ -74,6 +74,7 @@ export function outputContract(op: Operation) {
         required: ['upstreamStatus', 'retryAfter', 'correlationId'],
         properties: {
           idempotencyKey: { type: 'string' },
+          idempotentReplayed: { type: 'boolean' },
           upstreamStatus: { type: 'integer' },
           retryAfter: { type: ['string', 'null'] },
           correlationId: { type: 'string' },

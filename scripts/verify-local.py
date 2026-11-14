@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
-"""Exercise the real server and isolated DB. Reads AppFolio; never mutates upstream."""
+"""Exercise the real server and isolated DB. Mutations require explicit opt-in and the designated test credentials."""
 import os, json, urllib.request, urllib.parse, urllib.error, http.cookiejar, secrets, hashlib, base64
 base=os.environ.get('BASE_URL','http://localhost:3000')
 jar=http.cookiejar.CookieJar()
+if os.environ.get('VERCEL_PREVIEW_COOKIE'):
+ for part in os.environ['VERCEL_PREVIEW_COOKIE'].split('; '):
+  name,value=part.split('=',1)
+  jar.set_cookie(http.cookiejar.Cookie(0,name,value,None,False,urllib.parse.urlsplit(base).hostname,False,False,'/',True,True,None,True,None,None,{}))
 class NoRedirect(urllib.request.HTTPRedirectHandler):
  def redirect_request(self,*args,**kwargs): return None
 opener=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar),NoRedirect())
@@ -86,6 +90,7 @@ if os.environ.get('RUN_APPFOLIO_MUTATION_TESTS')=='1':
  state.write_text(json.dumps({'tokens':tokens,'clientId':client_id,'connectionId':connection,'testInventoryLocationId':record_id}));state.chmod(0o600)
  repeated=tool('createInventoryLocation',arguments,11)
  check(repeated['data']['Id']==record_id,'live idempotent create returns the same test record')
+ check(repeated['metadata'].get('idempotentReplayed') is True,'live replay marker is preserved for the agent')
  tool('updateInventoryLocation',{'path':{'Id':record_id},'body':{'Description':'MCP acceptance verified; disposable test record'},'idempotencyKey':secrets.token_hex(16)},12)
  found=tool('getInventoryLocations',{'query':{'filters':{'Id':record_id}}},13)
  check(any(row.get('Id')==record_id and row.get('Description')=='MCP acceptance verified; disposable test record' for row in found['data']['data']),'live update and read verify the created test record')

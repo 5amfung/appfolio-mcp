@@ -136,10 +136,10 @@ async function validateCredentials(credentials: Credentials) {
   } catch {
     throw new AppError('appfolio_connection_validation_unavailable', 502)
   }
-  if (!response.ok)
-    throw new AppError(
-      'appfolio_connection_validation_failed_work_order_read_required',
-    )
+  // A denied operation does not invalidate otherwise valid OAuth credentials.
+  // Connections may intentionally have no work-order permissions.
+  if (!response.ok && response.status !== 403)
+    throw new AppError('appfolio_connection_validation_failed')
   return token
 }
 export async function saveConnection(

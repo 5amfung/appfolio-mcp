@@ -497,7 +497,7 @@ export function AccountApp({
                   <p className="text-sm text-muted-foreground">
                     {editing
                       ? 'Leave fields empty to keep saved values. Replacing only the secret keeps agent authorizations. Changing an ID requires agents to authorize again.'
-                      : 'Credentials stay encrypted on the server. This connection must allow a work-order read for validation.'}
+                      : 'Credentials stay encrypted on the server. AppFolio checks permissions for each operation.'}
                   </p>
                   <div className="flex gap-3">
                     <Button disabled={pending} type="submit">

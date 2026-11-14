@@ -72,12 +72,15 @@ for path, item in spec['paths'].items():
                 body['oneOf']=[{'allOf':[branch], 'required':[branch['$ref'].split('.')[-1]]} for branch in body['oneOf']]
             properties['body']=body
             if op['requestBody'].get('required'): required.append('body')
-        if method in ('post','patch','put'): properties['idempotencyKey']={'type':'string','pattern':'^[A-Za-z0-9._:-]{1,128}$'}
+        if method in ('post','patch','put'): properties['idempotencyKey']={'type':'string','maxLength':256,'pattern':'^[ -~]*$'}
         schema={'type':'object','additionalProperties':False,'properties':properties,'required':required}
         if op['operationId']=='getWorkOrders':
             if 'query' not in required: required.append('query')
             q=properties['query'];q['required']=['filters'];q['properties']['filters']['anyOf']=[{'required':['Id']},{'required':['LastUpdatedAtFrom']}]
         responses={status: closed(convert(r.get('content',{}).get('application/json',{}).get('schema',{}))) for status,r in op['responses'].items()}
+        if method in ('post','patch','put'):
+            for status in ('400','409','422'):
+                responses.setdefault(status,{'type':'object','properties':{'code':{'type':'integer'},'message':{'type':'string'}},'required':['code','message']})
         desc=op.get('summary','')+'\n'+op.get('description','')
         if op.get('deprecated'): desc='DEPRECATED. '+desc
         operations.append({'name':op['operationId'],'method':method.upper(),'path':path,'description':desc,'deprecated':op.get('deprecated',False),'parameters':parameters,'mediaType':media,'inputSchema':closed(schema),'responses':responses})

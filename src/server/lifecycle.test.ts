@@ -435,3 +435,58 @@ it('keeps signed-flow identity stable across provider re-signing without mixing 
   expect(requestHash(a)).toBe(requestHash(b))
   expect(requestHash(a)).not.toBe(requestHash(b.replace('state=x', 'state=y')))
 })
+
+it('scopes caller retry keys by upstream path and returns replay markers', async () => {
+  const { grant } = await setup()
+  const identity = {
+    userId: 'user-a',
+    grantId: grant.id,
+    clientId: 'agent',
+    correlationId: 'path-retry',
+  }
+  const keys: string[] = []
+  for (const name of ['createInventoryLocation', 'createInventory']) {
+    const op = catalog.operations.find((o) => o.name === name)!
+    const input = fixture(op.inputSchema) as Record<string, unknown>
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (_url: unknown, init?: RequestInit) => {
+        keys.push(new Headers(init?.headers).get('Idempotency-Key')!)
+        return Response.json(fixture(op.responses['201']), {
+          status: 201,
+          headers: { 'Idempotent-Replayed': 'true' },
+        })
+      }),
+    )
+    const result = await execute(
+      op,
+      { ...input, idempotencyKey: 'same caller key / 2026' },
+      identity,
+    )
+    expect(result.isError).toBe(false)
+    expect(
+      'structuredContent' in result &&
+        result.structuredContent?.metadata.idempotentReplayed,
+    ).toBe(true)
+  }
+  expect(keys[0]).not.toBe(keys[1])
+})
+
+it('accepts valid OAuth connections whose work-order permission is denied', async () => {
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async (url: unknown) =>
+      String(url).endsWith('/oauth/token')
+        ? tokenResponse()
+        : Response.json(
+            { code: 403, message: 'Insufficient permissions' },
+            { status: 403 },
+          ),
+    ),
+  )
+  const id = await saveConnection('user-a', {
+    ...credentials,
+    name: 'Restricted connection',
+  })
+  expect((await connectionToken('user-a', id)).token).toMatch(/^upstream-/)
+})

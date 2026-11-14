@@ -44,6 +44,23 @@ describe('complete operation contract', () => {
       for (const response of Object.values(op.responses))
         expect(() => ajv.compile(response)).not.toThrow()
     })
+  it('accepts the documented printable ASCII key domain and rejects controls/oversized keys', () => {
+    const op = catalog.operations.find(
+      (o) => o.name === 'createInventoryLocation',
+    )!
+    const input = fixture(op.inputSchema) as Record<string, unknown>
+    const validate = inputValidators.get(op.name)!
+    expect(
+      validate({
+        ...input,
+        idempotencyKey: 'external key / 2026: ' + '.'.repeat(200),
+      }),
+    ).toBe(true)
+    expect(validate({ ...input, idempotencyKey: 'a'.repeat(256) })).toBe(true)
+    expect(validate({ ...input, idempotencyKey: '' })).toBe(true)
+    expect(validate({ ...input, idempotencyKey: 'a'.repeat(257) })).toBe(false)
+    expect(validate({ ...input, idempotencyKey: 'line\nfeed' })).toBe(false)
+  })
   it('requires a work-order ID or updated-since filter', () => {
     const validate = inputValidators.get('getWorkOrders')!
     expect(validate({})).toBe(false)

@@ -229,7 +229,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -493,6 +494,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -521,7 +552,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -678,6 +710,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -706,7 +768,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -896,6 +959,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -1272,7 +1365,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -1512,6 +1606,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -1622,7 +1761,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -1776,6 +1916,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -1852,7 +2037,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -1960,6 +2146,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -1988,7 +2219,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -2293,6 +2525,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -2321,7 +2598,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -2634,6 +2912,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -5447,7 +5755,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -5594,6 +5903,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -5670,7 +6009,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -5760,6 +6100,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -5805,7 +6190,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -5953,6 +6339,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -6114,7 +6530,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -6278,6 +6695,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -6306,7 +6753,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -6499,6 +6947,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -6527,7 +7020,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -6720,6 +7214,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -6796,7 +7320,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -6904,6 +7429,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -7632,7 +8202,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -7740,6 +8311,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -8046,7 +8662,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -8216,6 +8833,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -9035,7 +9682,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -9224,6 +9872,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -9526,7 +10204,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -9700,6 +10379,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -10056,7 +10765,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -10246,6 +10956,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -10322,7 +11062,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -10448,6 +11189,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -10473,7 +11259,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -10659,6 +11446,21 @@
               }
             }
           }
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -10687,7 +11489,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -10853,6 +11656,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -10898,7 +11731,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -11094,6 +11928,21 @@
               }
             }
           }
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -11268,7 +12117,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -11487,6 +12337,21 @@
               }
             }
           }
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -11786,7 +12651,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -11986,6 +12852,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -12092,7 +12988,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -12218,6 +13115,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -12629,7 +13556,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -12785,6 +13713,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -12813,7 +13771,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -12981,6 +13940,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -13041,7 +14030,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -13167,6 +14157,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -13774,7 +14794,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -13991,6 +15012,36 @@
               }
             }
           }
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -14036,7 +15087,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -14262,6 +15314,21 @@
               }
             }
           }
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -14290,7 +15357,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -14501,6 +15569,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -14577,7 +15675,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -14685,6 +15784,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -15054,7 +16198,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -15265,6 +16410,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -15867,7 +17042,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -16015,6 +17191,21 @@
               "description": "The request was understood, but not processed due to semantic errors. Ensure that the parameters contain valid values."
             }
           }
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -16160,7 +17351,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -16318,6 +17510,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -16646,7 +17868,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -16754,6 +17977,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -16821,7 +18089,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -16947,6 +18216,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -17229,7 +18528,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -17355,6 +18655,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -17622,7 +18952,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -17732,6 +19063,36 @@
               }
             }
           }
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -18749,7 +20110,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -18927,6 +20289,21 @@
             }
           },
           "type": "object"
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -18955,7 +20332,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -19147,6 +20525,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -19228,7 +20636,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -19336,6 +20745,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -20510,7 +21964,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -20868,6 +22323,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -21387,7 +22887,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -21759,6 +23260,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -21787,7 +23333,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -22126,6 +23673,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -22207,7 +23784,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -22315,6 +23893,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -22928,7 +24551,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -23036,6 +24660,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -23103,7 +24772,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -23229,6 +24899,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -23721,7 +25421,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -23930,6 +25631,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -23974,7 +25705,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -24160,6 +25892,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -24505,7 +26267,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -24680,6 +26443,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -24722,7 +26515,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -24838,6 +26632,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -25146,7 +26970,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -25305,6 +27130,21 @@
               }
             }
           }
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -25961,7 +27801,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -26480,6 +28321,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -26508,7 +28379,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -26669,6 +28541,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -26714,7 +28616,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -27200,6 +29103,21 @@
               }
             }
           }
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -27562,7 +29480,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -27670,6 +29589,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -27998,7 +29962,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -28106,6 +30071,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -28173,7 +30183,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -28299,6 +30310,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -28643,7 +30684,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -28769,6 +30811,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -29300,7 +31372,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -29408,6 +31481,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -29484,7 +31602,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -29592,6 +31711,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -29659,7 +31823,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -29785,6 +31950,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -30268,7 +32463,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -30424,6 +32620,21 @@
               }
             }
           }
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -31065,7 +33276,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -31252,6 +33464,36 @@
             }
           },
           "type": "object"
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -31280,7 +33522,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -31492,6 +33735,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -31537,7 +33810,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -31736,6 +34010,21 @@
               }
             }
           }
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -32121,7 +34410,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -32350,6 +34640,36 @@
               }
             }
           }
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -32426,7 +34746,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -32534,6 +34855,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -33399,7 +35765,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -33549,6 +35916,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -33877,7 +36274,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -33985,6 +36383,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -34052,7 +36495,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -34178,6 +36622,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -34206,7 +36680,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -34377,6 +36852,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -34419,7 +36924,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -34517,6 +37023,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -34840,7 +37391,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -34989,6 +37541,51 @@
             }
           },
           "type": "object"
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -35034,7 +37631,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -35195,6 +37793,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -35976,7 +38604,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -36140,6 +38769,21 @@
               }
             }
           }
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -36468,7 +39112,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -36576,6 +39221,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -36643,7 +39333,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -36769,6 +39460,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -36797,7 +39518,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -37158,6 +39880,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -37895,7 +40647,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -38066,6 +40819,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -38096,7 +40879,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -38263,6 +41047,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -38962,7 +41776,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -39275,6 +42090,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -39303,7 +42148,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -39633,6 +42479,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -39704,7 +42580,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -39848,6 +42725,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -39919,7 +42826,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -40051,6 +42959,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -40097,7 +43035,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -40487,6 +43426,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -40568,7 +43537,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -40675,6 +43645,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -40756,7 +43771,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -40864,6 +43880,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -41473,7 +44534,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -41581,6 +44643,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -41648,7 +44755,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -41774,6 +44882,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -41850,7 +44988,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -41976,6 +45115,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -42043,7 +45212,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -42169,6 +45339,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -43569,7 +46769,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -43791,6 +46992,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -43836,7 +47067,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -44048,6 +47280,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -45113,7 +48375,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -45286,6 +48549,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -45470,7 +48763,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -45654,6 +48948,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -45682,7 +49006,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -46024,6 +49349,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -46352,7 +49707,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -46460,6 +49816,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -46527,7 +49928,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -46653,6 +50055,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -47696,7 +51128,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -48039,6 +51472,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -48495,7 +51958,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -48790,6 +52254,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -48871,7 +52365,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -48979,6 +52474,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -49477,7 +53017,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -49585,6 +53126,51 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "422": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     },
@@ -49652,7 +53238,8 @@
           },
           "idempotencyKey": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9._:-]{1,128}$"
+            "maxLength": 256,
+            "pattern": "^[ -~]*$"
           }
         },
         "required": [
@@ -49778,6 +53365,36 @@
               }
             }
           }
+        },
+        "400": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
+        },
+        "409": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "code",
+            "message"
+          ]
         }
       }
     }
