@@ -57,3 +57,31 @@ responses preserve `Idempotent-Replayed` as `metadata.idempotentReplayed` and
 `Retry-After` as `metadata.retryAfter`. Documented global idempotency error statuses
 400, 409 and 422 are supported even where an operation's response list omits them.
 A local payload mismatch uses status 422 and never sends changed bytes upstream.
+
+## Agent-facing tool documentation
+
+The catalog preserves parameter and request-body descriptions, field semantics,
+examples, formats, enum values, defaults, and deprecation notices from the source.
+HTML presentation tags are normalized without dropping their text. Argument groups
+explain nested JSON query parameters, path IDs, body serialization, pagination,
+base64 file transfer, and idempotent retries. Result metadata explains upstream
+status, replay identity, retry timing, and request correlation.
+
+Object-only `allOf` compositions are expanded into their intersected properties
+and required fields. The required-only work-order filter alternatives and each
+work-order creation target also publish their common properties. The alternatives
+retain inclusive `anyOf` and exclusive `oneOf` behavior, so documentation does not
+weaken the existing validation rules.
+
+`scripts/generate-tools.py` runs `scripts/document-tool-examples.ts` using the
+same AJV configuration as runtime validation. Valid source examples are retained;
+incompatible examples are omitted from guidance and recorded in
+`catalog.omittedDocumentationExamples` with operation, schema location, and reason.
+The upstream file remains unchanged. Install the locked Node dependencies before
+generating or checking this catalog. Example record IDs are illustrative and must
+be replaced with records accessible through the selected connection.
+
+`src/mcp-documentation.test.ts` exercises real MCP discovery for all 181 tools and
+checks descriptions, examples, composed alternatives, and representative valid and
+invalid calls. Filters, bodies, pagination, uploads, and retry keys are covered.
+Longer reference resources are optional; essential help is present in discovery.

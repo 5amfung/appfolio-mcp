@@ -1,7 +1,8 @@
 import { z } from 'zod'
-import Ajv from 'ajv'
-import addFormats from 'ajv-formats'
 import source from './catalog.json'
+import { ajv } from './validation'
+
+export { ajv } from './validation'
 
 const parameter = z.object({
   name: z.string(),
@@ -29,18 +30,6 @@ const catalogSchema = z.object({
 })
 export const catalog = catalogSchema.parse(source)
 export type Operation = (typeof catalog.operations)[number]
-export const ajv = new Ajv({
-  strict: false,
-  allErrors: true,
-  validateFormats: true,
-})
-addFormats(ajv)
-ajv.addFormat('decimal', {
-  type: 'string',
-  validate: (v) => /^-?\d+(\.\d+)?$/.test(v),
-})
-ajv.addFormat('float', { type: 'number', validate: Number.isFinite })
-ajv.addFormat('string', true)
 export const inputValidators = new Map(
   catalog.operations.map((o) => [o.name, ajv.compile(o.inputSchema)]),
 )
@@ -65,19 +54,49 @@ export function outputContract(op: Operation) {
   })
   return {
     type: 'object',
+    description:
+      'AppFolio operation result. Inspect status and data, including any per-record failures; an accepted asynchronous request is not a completed write.',
     required: ['status', 'data', 'metadata'],
     properties: {
-      status: { type: 'integer' },
-      data: { anyOf: variants },
+      status: {
+        type: 'integer',
+        description: 'HTTP status returned by AppFolio.',
+      },
+      data: {
+        description:
+          'Operation-specific AppFolio response body or error details.',
+        anyOf: variants,
+      },
       metadata: {
         type: 'object',
+        description:
+          'Request correlation and instructions for retries or replay.',
         required: ['upstreamStatus', 'retryAfter', 'correlationId'],
         properties: {
-          idempotencyKey: { type: 'string' },
-          idempotentReplayed: { type: 'boolean' },
-          upstreamStatus: { type: 'integer' },
-          retryAfter: { type: ['string', 'null'] },
-          correlationId: { type: 'string' },
+          idempotencyKey: {
+            type: 'string',
+            description:
+              'Caller key to reuse with unchanged arguments under the same authorization when retrying this logical write within 24 hours.',
+          },
+          idempotentReplayed: {
+            type: 'boolean',
+            description:
+              'Whether AppFolio reported replay of a recorded result.',
+          },
+          upstreamStatus: {
+            type: 'integer',
+            description: 'Upstream HTTP status.',
+          },
+          retryAfter: {
+            type: ['string', 'null'],
+            description:
+              'Upstream Retry-After header, or null when absent. Respect its retry timing before another attempt.',
+          },
+          correlationId: {
+            type: 'string',
+            description:
+              'Internal request identifier for correlating this result with application logs; not an AppFolio record ID.',
+          },
         },
       },
     },

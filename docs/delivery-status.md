@@ -4,9 +4,11 @@ Application implementation and automated preview verification are ready for
 owner acceptance. Production is paused and must remain so until launch approval.
 
 - PR: https://github.com/5amfung/appfolio-mcp/pull/15, open pending acceptance.
-- Branch: `feat/authenticated-appfolio-mcp`.
-- Deployed commit: `913c336fb916dcc569064243021b8d3201920456`.
-- Tested preview deployment: `dpl_6MG4p8ZQ9jD3tBpB7skx161HDrdD`, target `staging`.
+- Tool-documentation fix: https://github.com/5amfung/appfolio-mcp/pull/16,
+  targeting the implementation branch.
+- Deployed branch: `fix/self-describing-mcp-tools`.
+- Deployed code commit: `0116fb17662586250108d8ec98a68b191a59e5aa`.
+- Tested preview deployment: `dpl_8zUgpR7Ep6SRACnSv5oU58rwmUfD`, target `staging`.
 - Preview project: `appfolio-mcp-preview`, `prj_YE82rvGwzErSdP5xEm2EzuAG68se`.
 - Paused production project: `appfolio-mcp`, `prj_oYPjnMTgWJveoQesbkD92RaYPBiN`.
 - Canonical preview: https://appfolio-mcp-preview.vercel.app.
@@ -14,13 +16,24 @@ owner acceptance. Production is paused and must remain so until launch approval.
 - Provisioned production branch remains `br-aged-bread-bf42fykn`; no migrations
   or test mutations were run there. Production secrets are not configured.
 - All 181 operations have tools, input/response schemas and contract fixtures.
-- 213 tests, build, types, lint, formatting, catalog freshness and the three-node
+- 223 tests, build, types, lint, formatting, catalog freshness and the three-node
   GitHub CI matrix pass on the deployed commit.
 - Real deployed account, OAuth, tool discovery, read/write/replay/read-back,
-  refresh, revocation, deletion and password flows pass.
-- Deployed browser account and OAuth flows pass in headless Chromium.
+  refresh, revocation, deletion and password flows passed on the earlier
+  implementation preview, before the documentation-only update.
+- Deployed browser account and OAuth flows passed in headless Chromium on that
+  earlier build; they were not repeated for this update.
 - PostHog preview success, removal, rejection, deletion and write records were
-  observed. Vercel error/fatal scan was empty for the tested deployment.
+  observed on the earlier build. Vercel error/fatal scan was empty for that build.
+
+The current update preserves nested input descriptions and valid examples across
+all 181 operations, including filters, composed request bodies, pagination,
+uploads and retry keys. Real protocol-handler tests verify the published schemas;
+a separate agent constructed representative calls using only those descriptors.
+The live public-discovery/authentication-enforcement checks pass on the updated
+canonical preview, and both production aliases remain paused. No AppFolio calls,
+database migrations, or business-record mutations were made for this update.
+Authenticated discovery in the owner's actual clients remains an acceptance step.
 
 ## Owner's next step
 
