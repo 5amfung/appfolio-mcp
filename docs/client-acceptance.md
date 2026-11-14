@@ -44,6 +44,11 @@ Claude Code HTTP entry, using its documented environment-variable expansion:
 
 Codex local HTTP entry:
 
+The configuration below uses the pending default-scope update. The pinned
+preview has not received that update while the Vercel project is paused. Until
+it is redeployed, that preview still needs
+`scopes = ["mcp:tools", "offline_access"]` in the Codex server entry.
+
 ```toml
 [mcp_servers.appfolio-preview]
 url = "https://appfolio-mcp-preview.vercel.app/api/mcp"
@@ -51,8 +56,11 @@ env_http_headers = { Cookie = "APPFOLIO_PREVIEW_COOKIE" }
 ```
 
 Start each client with that environment variable available. Then authorize the
-server through its normal OAuth UI, using `mcp:tools offline_access`. For another
-connection, add a second server name and complete a separate authorization.
+server through its normal OAuth UI. The server advertises `mcp:tools` and
+`offline_access` as its default scopes, so Codex needs no `scopes` configuration
+or `--scopes` login argument. These scopes enable tool access and automatic
+token renewal after consent. For another connection, add a second server name
+and complete a separate authorization.
 These configuration forms were checked against current official documentation;
 the actual installed-client flows still need the owner's acceptance.
 

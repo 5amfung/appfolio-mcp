@@ -8,6 +8,8 @@ import { fetchClientMetadataResource } from '@better-auth/cimd/node'
 import { getPool } from '@/db/index.server'
 import { activeGrant, grantClaim, selectedGrant } from './grants'
 
+export const mcpScopes = ['mcp:tools', 'offline_access']
+
 export function appUrl() {
   const url = process.env.BETTER_AUTH_URL
   if (!url)
@@ -44,7 +46,7 @@ function createAuth() {
         loginPage: '/sign-in',
         consentPage: '/consent',
         resource: `${appUrl()}/api/mcp`,
-        scopes: ['mcp:tools', 'offline_access'],
+        scopes: mcpScopes,
         grantTypes: ['authorization_code', 'refresh_token'],
         accessTokenExpiresIn: 900,
         refreshTokenExpiresIn: 60 * 60 * 24 * 30,

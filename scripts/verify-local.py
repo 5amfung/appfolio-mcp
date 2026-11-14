@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Exercise the real server and isolated DB. Mutations require explicit opt-in and the designated test credentials."""
-import os, json, urllib.request, urllib.parse, urllib.error, http.cookiejar, secrets, hashlib, base64
+import os, json, urllib.request, urllib.parse, urllib.error, http.cookiejar, secrets, hashlib, base64, re
 base=os.environ.get('BASE_URL','http://localhost:3000')
 jar=http.cookiejar.CookieJar()
 if os.environ.get('VERCEL_PREVIEW_COOKIE'):
@@ -36,6 +36,10 @@ def check(condition,label):
  if not condition:raise RuntimeError(label+'; last status='+str(status)+'; error='+str(last_error))
  print('PASS '+label,flush=True)
 
+status,_,headers=req('/api/mcp')
+discovery=re.search(r'\bscope="([^"]+)"',headers.get('WWW-Authenticate',''))
+check(status==401 and discovery is not None and set(discovery[1].split())=={'mcp:tools','offline_access'},'OAuth discovery defaults to tool access and automatic renewal')
+scope=discovery[1]
 password=secrets.token_urlsafe(24)
 status,user,_=req('/api/auth/sign-up/email',{'email':'verification-'+secrets.token_hex(5)+'@example.com','password':password,'name':'Verification'})
 check(status==200,'signup creates account and session')
@@ -45,12 +49,13 @@ check(status==200 and 'id' in c,'create encrypted AppFolio connection')
 connection=c['id']
 status,account,_=req('/api/account')
 check(status==200 and len(account['connections'])==1 and 'clientSecret' not in json.dumps(account),'settings hide credential values')
-status,client,_=req('/api/auth/oauth2/register',{'application_type':'native','client_name':'Verification agent','redirect_uris':['http://127.0.0.1:38219/callback'],'token_endpoint_auth_method':'none','grant_types':['authorization_code','refresh_token'],'response_types':['code'],'scope':'mcp:tools offline_access'})
+status,client,_=req('/api/auth/oauth2/register',{'application_type':'native','client_name':'Verification agent','redirect_uris':['http://127.0.0.1:38219/callback'],'token_endpoint_auth_method':'none','grant_types':['authorization_code','refresh_token'],'response_types':['code']})
 check(status in (200,201) and 'client_id' in client,'dynamic public client registration')
+check(set(client.get('scope','').split())==set(scope.split()),'client registration uses server scope defaults')
 client_id=client['client_id']
 verifier=secrets.token_urlsafe(48)
 challenge=base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).decode().rstrip('=')
-params={'client_id':client_id,'redirect_uri':'http://127.0.0.1:38219/callback','response_type':'code','code_challenge':challenge,'code_challenge_method':'S256','state':secrets.token_hex(12),'scope':'mcp:tools offline_access','resource':base+'/api/mcp'}
+params={'client_id':client_id,'redirect_uri':'http://127.0.0.1:38219/callback','response_type':'code','code_challenge':challenge,'code_challenge_method':'S256','state':secrets.token_hex(12),'scope':scope,'resource':base+'/api/mcp'}
 status,authorization,h=req('/api/auth/oauth2/authorize?'+urllib.parse.urlencode(params))
 authorization_url=h.get('Location') or authorization.get('url','')
 check(status in (200,302) and '/select-connection?' in authorization_url,'authorize requires explicit connection selection')
@@ -66,7 +71,7 @@ check(status==200 and 'url' in consent,'consent produces redirect')
 callback=urllib.parse.parse_qs(urllib.parse.urlsplit(consent['url']).query)
 check('code' in callback and callback.get('state')==[params['state']],'callback returns code and original state')
 status,tokens,_=req('/api/auth/oauth2/token',{'grant_type':'authorization_code','client_id':client_id,'code':callback['code'][0],'redirect_uri':params['redirect_uri'],'code_verifier':verifier,'resource':base+'/api/mcp'},form=True)
-check(status==200 and 'access_token' in tokens and 'refresh_token' in tokens,'PKCE code exchange issues bound access and refresh tokens')
+check(status==200 and 'access_token' in tokens and 'refresh_token' in tokens and set(tokens.get('scope','').split())==set(scope.split()),'PKCE code exchange issues bound access and refresh tokens with discovered scopes')
 token=tokens['access_token']
 import pathlib
 state=pathlib.Path('/tmp/mcp-verification-state.json');state.write_text(json.dumps({'tokens':tokens,'clientId':client_id,'connectionId':connection}));state.chmod(0o600)
@@ -97,6 +102,8 @@ if os.environ.get('RUN_APPFOLIO_MUTATION_TESTS')=='1':
  print('Test inventory location retained for inspection; no delete operation exists in the contract.',flush=True)
 status,renewed,_=req('/api/auth/oauth2/token',{'grant_type':'refresh_token','client_id':client_id,'refresh_token':tokens['refresh_token'],'resource':base+'/api/mcp'},form=True)
 check(status==200 and 'access_token' in renewed,'refresh rotates tokens automatically')
+status,listed,_=req('/api/mcp',{'jsonrpc':'2.0','id':14,'method':'tools/list'},renewed['access_token'])
+check(status==200 and len(listed.get('result',{}).get('tools',[]))==181,'renewed access token can still discover all tools')
 status,account,_=req('/api/account');grant=account['grants'][0]['id']
 status,_,_=req('/api/account',{'action':'revoke','id':grant})
 check(status==200,'remove authorization')

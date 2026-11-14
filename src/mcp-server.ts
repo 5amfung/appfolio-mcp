@@ -7,7 +7,7 @@ import {
 import { AjvJsonSchemaValidator } from '@modelcontextprotocol/server/validators/ajv'
 import { z } from 'zod'
 import { requireMcpAuth } from '@better-auth/mcp'
-import { getAuth, appUrl } from '@/server/auth'
+import { getAuth, appUrl, mcpScopes } from '@/server/auth'
 import { activeGrant, claimsSchema, grantClaim } from '@/server/grants'
 import { AppError } from '@/server/errors'
 import { log, finishLogs } from '@/server/logging'
@@ -102,7 +102,11 @@ export async function handleMcp(request: Request) {
           correlationId,
         }).fetch(verifiedRequest, { parsedBody })
       },
-      { resource: `${appUrl()}/api/mcp`, requiredScopes: ['mcp:tools'] },
+      {
+        resource: `${appUrl()}/api/mcp`,
+        requiredScopes: ['mcp:tools'],
+        challengeScopes: mcpScopes,
+      },
     )
     return await protectedHandler(request)
   } catch (error) {

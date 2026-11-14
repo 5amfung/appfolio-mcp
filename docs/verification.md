@@ -110,10 +110,29 @@ and launch acceptance are complete.
 
 The corrected preview was re-verified after the production pause. All deployed
 server and browser checks passed, including the `Idempotent-Replayed` marker.
-CI passed on the application commit above. Remaining PR-head changes are only
-verification evidence and handoff documentation.
+CI passed on the application commit above. The scope-discovery follow-up below
+has not yet been deployed to this preview.
 
 The project pause blocks new Vercel builds, including the subsequent documentation
 commit's automatic preview. Its Vercel check is intentionally blocked by the
 platform pause; GitHub CI passes on all three Node versions. The pinned, tested
 preview stays available. This is a release-policy gate, not a code-check failure.
+
+## Default scope follow-up
+
+Unauthenticated MCP requests previously advertised only `mcp:tools`, so Codex
+needed an explicit `offline_access` scope to obtain refresh tokens. The server
+now advertises both scopes from the same list used by the OAuth provider.
+Tool calls still require only `mcp:tools`; consent controls offline access.
+
+All 213 automated tests pass, including a regression test against the real auth
+middleware. Build, types, lint, formatting and catalog checks pass. The built
+server also passed the real-server read-only sequence against the isolated
+Neon branch and designated AppFolio test connection. That run discovered scopes
+from the unauthenticated challenge, registered without a scope override, issued
+access and refresh tokens, read work orders, rotated tokens, and discovered all
+181 tools using the renewed access token. Removal rejected old access and
+refresh tokens. No AppFolio records were mutated in this follow-up.
+
+The default-scope update awaits deployment because the project pause blocks
+new previews. The pinned preview above still has the previous advertisement.

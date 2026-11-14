@@ -58,9 +58,16 @@ and their application/provider credentials were cleaned up after tests.
 ## Current deployment-check state
 
 The owner-approved project pause also blocks creation of new preview deployments.
-The documentation-only PR head therefore has a blocked Vercel deployment check;
-all three GitHub CI jobs pass. The stable preview alias remains pinned to the
+Subsequent PR heads therefore have a blocked Vercel deployment check.
+The stable preview alias remains pinned to the
 successfully tested application deployment above, which remains accessible.
 Do not forge a successful deployment status or unpause merely to clear this gate.
 When resuming release preparation, account for this platform behavior and obtain
 the owner's launch decision before restoring production availability.
+
+The pending scope-discovery update makes `mcp:tools` and `offline_access` the
+advertised defaults, removing the need for a Codex scopes setting. It passes
+213 automated tests and the built-server login/read/refresh/removal sequence
+using discovered scopes. It has not reached the pinned preview; that deployment
+still needs an explicit Codex scopes setting until it is replaced. See
+`verification.md` for the separate local and deployed evidence.
