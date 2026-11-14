@@ -63,8 +63,8 @@ Production-build and deployed tests are the acceptance evidence.
 
 ## Deployed preview evidence
 
-Preview application build: `d40726b17e45942eccdb0cda6ee65a3b9f0b1ee9`.
-Deployment: `dpl_2AnNZc8xtvc8kN3dSrsUxAJw5p64`.
+Preview application build: `041b00553dff58eb4ddd6484eac070bbe6a9f6ac`.
+Deployment: `dpl_FuTTBpuUeyAPLBp9BZMoZ2xCgq3x`.
 Canonical URL: https://appfolio-mcp-preview.vercel.app.
 
 The deployed server passed the full real-server read/write sequence: accounts,
@@ -81,9 +81,10 @@ runtime error/fatal scan for this deployment returned no records. Application lo
 were inspected separately in PostHog; no credentials or bodies were present.
 
 GitHub CI passed all three Node versions: 22.22.2, 24.15.0 and 26. The 212-test
-suite, build, lint, formatting, types and catalog checks passed. A final idempotency conformance correction broadens printable-key support, scopes
-keys by request path and preserves replay markers. The current PR head and its
-updated preview must pass CI and deployed replay checks before handoff.
+suite, build, lint, formatting, types and catalog checks passed. The final idempotency correction accepts printable keys up to 256 characters,
+scopes caller keys by request path and exposes the upstream replay marker.
+The preview additionally permits valid OAuth connections whose work-order probe
+is permission-denied; actual operation permissions remain enforced upstream.
 
 Automatic approval review initially rejected a persistent project-wide bypass
 credential. The owner subsequently approved a temporary preview-specific access
@@ -95,3 +96,19 @@ Verification accounts, their provider sessions/tokens and their custom connectio
 grant, job and retry records were removed from the isolated Neon branch. AppFolio
 test inventory locations remain because the upstream contract has no delete
 operation for that resource. No production database was mutated.
+
+## Production gate
+
+Vercel automatically marked its initial Git-connected feature-branch build as a
+production target before an intentional production release. No production
+application secrets or database were configured. Automatic production domain
+assignment was disabled. Automatic approval review initially rejected pausing
+that target; the owner then explicitly approved the pause and the pause API
+succeeded. Production remains paused, protected and unaccepted. The preview is a
+separate deployment. Do not unpause or release until the owner's client checks
+and launch acceptance are complete.
+
+The corrected preview was re-verified after the production pause. All deployed
+server and browser checks passed, including the `Idempotent-Replayed` marker.
+CI passed on the application commit above. Remaining PR-head changes are only
+verification evidence and handoff documentation.
