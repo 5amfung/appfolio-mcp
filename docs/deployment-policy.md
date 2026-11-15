@@ -1,8 +1,8 @@
 # Preview and production deployments
 
 Use the existing Vercel project `appfolio-mcp` in team `doughyrematch`.
-The temporary `appfolio-mcp-preview` project is being retired after its public
-alias is moved back. Do not create additional Vercel projects for PRs.
+The temporary `appfolio-mcp-preview` project was deleted after its public
+alias moved back. Do not create additional Vercel projects for PRs.
 
 ## Release policy
 
@@ -25,6 +25,8 @@ record, but no production build or domain update occurs. The shell command in
 Tests exercise both the policy and the real shell command.
 
 The Release Please workflow uses the same checker when it publishes a release.
+It dispatches CI for its generated PR using GitHub's built-in token, because
+updates made with that token do not trigger ordinary pull-request workflows.
 Merging the application PR updates the pending Release Please PR; it does not
 publish production. Merging the Release Please PR is the production release
 decision. Do not merge that PR until launch verification is accepted.
@@ -80,17 +82,18 @@ Each preview has its own accounts and connection selection.
 
 ## Initial consolidation
 
-The initial unconfigured Production deployment has been deleted. The original
-project now has no Production deployments. Its project-wide pause must be lifted
-to build PR previews. Automatic approval review requires explicit owner approval
-for unpausing because that operation can also restore production domain assignment.
-The release filter is installed before that step; no ordinary merge is eligible
-for production.
+The initial unconfigured Production deployment was deleted. The original
+project was unpaused with explicit owner approval after confirming it had no
+Production deployments and installing the release filter. No ordinary merge is
+eligible for production. Project-wide pause is an emergency control that also
+blocks new previews; do not use it as the normal release gate.
 
-After previews are verified on the original project, merge the application PR,
-verify the pending Release Please PR's isolated preview, move the public review
-alias, and delete the temporary Vercel project. The Vercel connector exposes only
-a deletion link, so the owner must confirm project deletion in the dashboard.
+The original project's PR preview passed deployed server and browser checks.
+The public alias moved there, and the owner deleted the temporary project through
+the Vercel dashboard. After merging the application PR, use the pending Release
+Please PR's isolated preview for release acceptance and move the review alias to
+that deployment. Production remains unavailable until that Release Please PR is
+merged.
 
 Verify with `BASE_URL=<preview-origin> EXPECT_PRODUCTION_UNPUBLISHED=1 python3
 scripts/verify-public-preview.py` before the first release. Then run the

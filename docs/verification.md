@@ -1,5 +1,42 @@
 # Verification evidence
 
+## Single-project deployment policy
+
+The Neon-managed integration is connected to the original `appfolio-mcp`
+Vercel project. Production's pooled and direct URLs both identify the existing
+Neon `production` branch. The shared Preview fallback was cleared and the global
+Preview OAuth origin removed. Production has separate auth/encryption keys.
+
+The owner deleted the original unconfigured Production deployment and explicitly
+approved unpausing the project after the release filter was installed and no
+Production deployments remained. Automatic approval review initially rejected
+unpausing without that explicit approval.
+
+Original-project preview `dpl_N8P2fd5f279khHipB65QEYKGNGE3`, commit
+`bb81db4fd2b5161b84f059a0a161fc3b931ea771`, reached READY as a Preview.
+The integration created `preview/feat/authenticated-appfolio-mcp`, branch
+`br-curly-tree-bfdt6pfl`, as a child of `production`. Its application schema and
+preview initialization marker were present. Production still had no application
+schema. The public review alias moved back with its existing exception preserved.
+
+Without a Vercel cookie, server checks passed discovery, default scopes, signup,
+private connection storage, DCR, selection, consent, PKCE, all 181 tools, a live
+work-order read, refresh rotation, refreshed access, revocation, deletion and
+password checks. Browser accounts/passwords and OAuth also passed. Both production
+domains returned `404 DEPLOYMENT_NOT_FOUND`. No AppFolio records were mutated.
+
+Automatic approval review rejected a new public exception for the PR-specific
+hostname. It remained protected; verification used the existing public review
+hostname. The owner deleted the extra Vercel project and its API returned 404.
+
+The deployment-policy commit passed CI on Node 22, 24 and 26. Tests cover release
+eligibility, API/script failure behavior, the shell exit mapping, database target
+guards and one-time initialization of preview auth data. Production publishing
+itself remains untested until the owner merges a Release Please PR. This work
+does not publish one merely to test the deployment gate.
+
+The sections below retain evidence from earlier implementation phases.
+
 Implementation is in progress. This file records observed evidence rather than
 assuming the brief is satisfied by compilation or an operation inventory.
 
@@ -188,7 +225,7 @@ production aliases still returned `503 DEPLOYMENT_PAUSED`. GitHub CI passed all
 three Node versions and 213 tests on the deployed commit. Actual client acceptance
 is still pending the owner.
 
-## Current preview and agent-facing documentation
+## Earlier preview and agent-facing documentation
 
 Deployed code commit: `0116fb17662586250108d8ec98a68b191a59e5aa`.
 Deployment: `dpl_8zUgpR7Ep6SRACnSv5oU58rwmUfD`, project `appfolio-mcp-preview`,

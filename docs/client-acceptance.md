@@ -10,7 +10,9 @@ publicly reachable through a Vercel Deployment Protection Exception. No
 `APPFOLIO_PREVIEW_COOKIE`, Cookie header, bypass link or Vercel login is needed.
 Remove any old Cookie header from existing client entries. Application signup,
 sign-in, explicit connection selection and OAuth consent remain required.
-Production remains paused, and other deployment URLs retain Vercel protection.
+Production remains unpublished until a Release Please PR is merged. Other
+deployment URLs retain Vercel protection. Each PR uses its own Neon database;
+its accounts and grants are separate from production and other previews.
 
 ## ChatGPT Desktop
 

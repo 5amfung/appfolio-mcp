@@ -19,37 +19,39 @@ Production must not inherit test credentials or the preview database/keyring.
 The canonical preview origin is `https://appfolio-mcp-preview.vercel.app`.
 That hostname has a Vercel Deployment Protection Exception for public client
 testing. It needs no Vercel access cookie. The exception applies only to that
-preview alias; production remains paused and other URLs retain their protection.
+preview alias; other URLs retain their protection. Production is published only
+after a verified Release Please merge.
 Application OAuth and private account/connection checks still apply. To restore
 the platform login requirement, revoke the alias's `alias-protection-override`
 exception, rather than changing application auth or unpausing the project.
 Run `python3 scripts/verify-public-preview.py` to check public discovery,
-application auth enforcement and both production aliases' paused status without
-using any cookies or credentials.
+application auth enforcement without cookies or credentials. Before the first
+release, set `EXPECT_PRODUCTION_UNPUBLISHED=1` to check both production aliases
+remain unavailable.
 The final production origin must be established before issuing production grants.
 Changing the origin changes issuer/audience and requires client reauthorization.
 
 ## Preview deployment target
 
-Use project `appfolio-mcp-preview` (`prj_YE82rvGwzErSdP5xEm2EzuAG68se`) in team
-`doughyrematch` for preview deployments. Keep `appfolio-mcp`
-(`prj_oYPjnMTgWJveoQesbkD92RaYPBiN`) paused until launch approval. Its pause also
-blocks new preview builds, which is why these projects are separate.
+Use the original `appfolio-mcp` project (`prj_oYPjnMTgWJveoQesbkD92RaYPBiN`) in
+team `doughyrematch` for both environments. The temporary extra project has been
+deleted. Read `deployment-policy.md` before changing the release filter or Neon
+integration.
 
-The preview project has only Preview-scoped application variables, copied from
-the existing isolated test configuration. Its production configuration is empty,
-and automatic production domain assignment is disabled. Vercel labelled its first
-bootstrap build as production despite a staging request; that build is protected,
-has no production application configuration and does not own the canonical preview
-URL. The tested deployment is the subsequent `staging` target. Do not promote the
-bootstrap build or populate this test project's production environment.
+Vercel's Git integration creates PR previews. Neon supplies their isolated branch
+connections. The build checks the database target, migrates it and initializes a
+new preview's auth/application state once. Never configure a shared Preview
+database fallback or copy production auth/encryption keys into Preview.
 
-Verify the exact commit and Preview target before assigning the canonical alias.
-Keep `BETTER_AUTH_URL=https://appfolio-mcp-preview.vercel.app`; the alias keeps OAuth
-issuer/resource values stable. Run public-access and real-server read-only checks
-after alias assignment. Existing preview accounts and encrypted connections remain
-on the same isolated Neon branch. The local ignored `.vercel/project.json` now
-links to this preview project; check the link before any CLI deployment.
+Normal PRs derive their OAuth origin from the Vercel branch URL. Only the intended
+public review branch has a branch-specific canonical origin. Verify the exact
+commit and Preview target before moving the public alias, then run public-access,
+real-server read-only and browser checks.
+
+The local ignored `.vercel/project.json` must link to `appfolio-mcp`; verify the
+link before a CLI deployment. Production normally deploys through the release
+filter after merging a Release Please PR. Do not publish from the CLI merely to
+bypass a skipped build.
 
 ## Encryption and recovery
 
