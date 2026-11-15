@@ -3,11 +3,13 @@ CREATE TABLE "appfolio_connection" (
 	"user_id" text NOT NULL,
 	"name" text NOT NULL,
 	"credentials" text NOT NULL,
+	"identifier_hint" text DEFAULT 'Credentials saved' NOT NULL,
 	"version" integer DEFAULT 1 NOT NULL,
 	"token" text,
 	"expires_at" timestamp with time zone,
 	"lease_id" text,
 	"lease_until" timestamp with time zone,
+	"jobs_poll_after" timestamp with time zone,
 	"deleted_at" timestamp with time zone,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
@@ -22,6 +24,13 @@ CREATE TABLE "appfolio_grant" (
 	"session_id" text NOT NULL,
 	"approved_at" timestamp with time zone,
 	"revoked_at" timestamp with time zone,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "appfolio_job" (
+	"id" text PRIMARY KEY,
+	"grant_id" text NOT NULL,
+	"upstream_id" text NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
@@ -41,4 +50,5 @@ CREATE INDEX "connection_owner" ON "appfolio_connection" ("user_id");--> stateme
 CREATE INDEX "grant_owner" ON "appfolio_grant" ("user_id");--> statement-breakpoint
 CREATE INDEX "grant_connection" ON "appfolio_grant" ("connection_id");--> statement-breakpoint
 ALTER TABLE "appfolio_grant" ADD CONSTRAINT "appfolio_grant_connection_id_appfolio_connection_id_fkey" FOREIGN KEY ("connection_id") REFERENCES "appfolio_connection"("id");--> statement-breakpoint
+ALTER TABLE "appfolio_job" ADD CONSTRAINT "appfolio_job_grant_id_appfolio_grant_id_fkey" FOREIGN KEY ("grant_id") REFERENCES "appfolio_grant"("id");--> statement-breakpoint
 ALTER TABLE "appfolio_retry" ADD CONSTRAINT "appfolio_retry_grant_id_appfolio_grant_id_fkey" FOREIGN KEY ("grant_id") REFERENCES "appfolio_grant"("id");

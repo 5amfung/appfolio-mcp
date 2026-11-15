@@ -1,1 +1,0 @@
-ALTER TABLE "appfolio_connection" ADD COLUMN "identifier_hint" text DEFAULT 'Credentials saved' NOT NULL;

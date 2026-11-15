@@ -2,7 +2,7 @@
   "type": "base",
   "version": "9",
   "dialect": "postgres",
-  "id": "0a2f9fef-cad2-4a76-96a3-0a8f17cca900",
+  "id": "6c88ee3f-ac0d-44d0-ba4f-a0cc4ff99356",
   "prevIds": [
     "00000000-0000-0000-0000-000000000000"
   ],
@@ -41,6 +41,25 @@
         "n|type|public.appfolio_grant",
         "n|rel|public.appfolio_grant_pkey",
         "n|rel|public.appfolio_grant_request_hash_key"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "appfolio_job"
+      ],
+      "writes": [
+        "s|tbl|public.appfolio_job",
+        "n|tbl|public.appfolio_job",
+        "e|tbl|public.appfolio_job",
+        "n|rel|public.appfolio_job",
+        "n|type|public.appfolio_job",
+        "n|rel|public.appfolio_job_pkey"
       ],
       "reads": [
         "n|sch|public"
@@ -174,6 +193,29 @@
       "statementTarget": [
         "table",
         "public",
+        "appfolio_job"
+      ],
+      "writes": [
+        "s|fk|public.appfolio_job.appfolio_job_grant_id_appfolio_grant_id_fkey",
+        "n|fk|public.appfolio_job.appfolio_job_grant_id_appfolio_grant_id_fkey",
+        "e|fk|public.appfolio_job.appfolio_job_grant_id_appfolio_grant_id_fkey",
+        "n|con|public.appfolio_job.appfolio_job_grant_id_appfolio_grant_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.appfolio_job",
+        "n|sch|public",
+        "n|tbl|public.appfolio_grant",
+        "n|sch|public",
+        "n|col|public.appfolio_job.grant_id",
+        "n|col|public.appfolio_grant.id",
+        "e|uniqueness|public.appfolio_grant.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
         "appfolio_retry"
       ],
       "writes": [
@@ -203,6 +245,12 @@
     {
       "schema": "public",
       "name": "appfolio_grant",
+      "isRlsEnabled": false,
+      "entityType": "tables"
+    },
+    {
+      "schema": "public",
+      "name": "appfolio_job",
       "isRlsEnabled": false,
       "entityType": "tables"
     },
@@ -267,6 +315,19 @@
     {
       "schema": "public",
       "table": "appfolio_connection",
+      "name": "identifier_hint",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "'Credentials saved'",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_connection",
       "name": "version",
       "type": "integer",
       "typeSchema": null,
@@ -320,6 +381,19 @@
       "schema": "public",
       "table": "appfolio_connection",
       "name": "lease_until",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": false,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_connection",
+      "name": "jobs_poll_after",
       "type": "timestamp with time zone",
       "typeSchema": null,
       "notNull": false,
@@ -475,6 +549,58 @@
     {
       "schema": "public",
       "table": "appfolio_grant",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": "now()",
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_job",
+      "name": "id",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_job",
+      "name": "grant_id",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_job",
+      "name": "upstream_id",
+      "type": "text",
+      "typeSchema": null,
+      "notNull": true,
+      "dimensions": 0,
+      "default": null,
+      "generated": null,
+      "identity": null,
+      "entityType": "columns"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_job",
       "name": "created_at",
       "type": "timestamp with time zone",
       "typeSchema": null,
@@ -699,6 +825,23 @@
     },
     {
       "schema": "public",
+      "table": "appfolio_job",
+      "name": "appfolio_job_grant_id_appfolio_grant_id_fkey",
+      "nameExplicit": false,
+      "columns": [
+        "grant_id"
+      ],
+      "schemaTo": "public",
+      "tableTo": "appfolio_grant",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "entityType": "fks"
+    },
+    {
+      "schema": "public",
       "table": "appfolio_retry",
       "name": "appfolio_retry_grant_id_appfolio_grant_id_fkey",
       "nameExplicit": false,
@@ -728,6 +871,16 @@
       "schema": "public",
       "table": "appfolio_grant",
       "name": "appfolio_grant_pkey",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "schema": "public",
+      "table": "appfolio_job",
+      "name": "appfolio_job_pkey",
       "columns": [
         "id"
       ],

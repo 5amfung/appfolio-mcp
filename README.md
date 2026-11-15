@@ -35,6 +35,11 @@ and the committed application migrations. It does not run during application
 startup or builds. Review the plan and back up production before applying changes.
 `docs/auth-schema.sql` records the initial provider schema for review.
 
+The Drizzle history starts with a regenerated initial migration for an empty
+database. Reset any disposable database that ran the earlier development
+migrations before applying this history. Keep future migrations incremental
+after the first production launch.
+
 For end-to-end verification use the built Nitro server, which is also the
 production deployment artifact. The Vite development transport has shown an empty
 400 response on a streamed MCP call immediately following tool discovery; that
