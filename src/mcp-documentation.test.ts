@@ -216,9 +216,8 @@ describe('agent-visible MCP documentation', () => {
       idempotentHint: true,
     })
     expect(validation.description).toMatch(/occupancy ID|occupancy identifier/i)
-    expect(validation.description).toContain(
-      'TENANT_VALIDATION_CACHE_TTL_SECONDS',
-    )
+    expect(validation.description).toContain('only authenticated')
+    expect(validation.description).not.toMatch(/cache|snapshot|TTL/i)
     const validateInput = ajv.compile(validation.inputSchema)
     const evidence = {
       firstName: 'Avery',

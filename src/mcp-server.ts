@@ -95,7 +95,7 @@ export function protocolHandler(identity: {
         'validate_tenant',
         {
           description:
-            'Match tenant name, phone, optional email, and rented-unit address using the authorized connection. Success requires exactly one Current tenant-unit match and a valid occupancy ID ready for work-order creation. A complete tenant/unit snapshot is shared across function instances, with a 12-hour default TTL configured by TENANT_VALIDATION_CACHE_TTL_SECONDS. Cache hits avoid AppFolio requests; misses refill from AppFolio and can take several seconds. Cached records may be stale within the TTL. Missing occupancy or ambiguity requires review. Inspect status and error.failureClass; only authenticated permits the next creation step. Metadata reports cache hit/miss, snapshot timing, and correlation ID. This matches records, not proof of phone or email possession.',
+            'Match tenant name, phone, optional email, and rented-unit address using the authorized AppFolio connection. Success requires exactly one Current tenant-unit match and a valid occupancy ID for work-order creation. Missing occupancy or ambiguous matches require review. Inspect status and error.failureClass; only authenticated permits creating a work order with the returned occupancy ID. Matching does not verify possession of a phone number or email address.',
           inputSchema: validateTenantSchemas.input,
           outputSchema: validateTenantSchemas.output,
           annotations: {
