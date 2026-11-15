@@ -8,7 +8,13 @@ import { connectionToken, readCredentials } from '@/server/connections'
 import { encrypt, decrypt } from '@/server/crypto'
 import { AppError } from '@/server/errors'
 import { log } from '@/server/logging'
-import { ajv, inputSchema, inputValidators, type Operation } from './contract'
+import {
+  ajv,
+  inputSchema,
+  inputValidators,
+  rateLimitResponse,
+  type Operation,
+} from './contract'
 import {
   serializeUrl,
   serializeBody,
@@ -178,20 +184,28 @@ export async function runOperation(
       )
     }
     upstreamStatus = response.status
-    const text = await boundedResponse(response)
     let data: unknown = null
-    if (text) {
-      try {
-        data = JSON.parse(text)
-      } catch {
-        throw new AppError('upstream_invalid_json', 502)
+    if (response.status === 429) {
+      // The status and headers establish the rate limit. Its body may be empty,
+      // HTML, or unreadable, and endpoint schemas often omit this global response.
+      await response.body?.cancel().catch(() => undefined)
+      data = { ...rateLimitResponse }
+    } else {
+      const text = await boundedResponse(response)
+      if (text) {
+        try {
+          data = JSON.parse(text)
+        } catch {
+          throw new AppError('upstream_invalid_json', 502)
+        }
       }
+      const responseSchema =
+        op.responses[String(response.status)] ?? op.responses.default
+      if (!responseSchema)
+        throw new AppError('upstream_undocumented_status', 502)
+      if (!ajv.validate(responseSchema, data))
+        throw new AppError('upstream_contract_mismatch', 502)
     }
-    const responseSchema =
-      op.responses[String(response.status)] ?? op.responses.default
-    if (!responseSchema) throw new AppError('upstream_undocumented_status', 502)
-    if (!ajv.validate(responseSchema, data))
-      throw new AppError('upstream_contract_mismatch', 502)
     if (response.ok && op.path.endsWith('/async')) {
       const job = z.object({ JobId: z.string().uuid() }).parse(data)
       const id = createHash('sha256')

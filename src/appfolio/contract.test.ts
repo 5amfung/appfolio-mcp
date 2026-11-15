@@ -1,6 +1,12 @@
 // @vitest-environment node
 import { describe, it, expect } from 'vitest'
-import { catalog, inputValidators, ajv } from './contract'
+import {
+  catalog,
+  inputValidators,
+  ajv,
+  outputContract,
+  rateLimitResponse,
+} from './contract'
 import {
   serializeUrl,
   serializeBody,
@@ -60,6 +66,23 @@ describe('complete operation contract', () => {
     expect(validate({ ...input, idempotencyKey: '' })).toBe(true)
     expect(validate({ ...input, idempotencyKey: 'a'.repeat(257) })).toBe(false)
     expect(validate({ ...input, idempotencyKey: 'line\nfeed' })).toBe(false)
+  })
+  it('publishes the normalized rate-limit envelope for every API operation', () => {
+    for (const op of catalog.operations) {
+      const validate = ajv.compile(outputContract(op))
+      expect(
+        validate({
+          status: 429,
+          data: rateLimitResponse,
+          metadata: {
+            upstreamStatus: 429,
+            retryAfter: null,
+            correlationId: 'rate-limit-contract',
+          },
+        }),
+        op.name + ': ' + JSON.stringify(validate.errors),
+      ).toBe(true)
+    }
   })
   it('requires a work-order ID or updated-since filter', () => {
     const validate = inputValidators.get('getWorkOrders')!

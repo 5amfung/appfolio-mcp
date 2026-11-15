@@ -35,6 +35,16 @@ that key is rejected. Replays older than 24 hours require a newly confirmed
 operation. GET and DELETE do not gain retry safety from an idempotency key.
 `Retry-After` is returned in metadata; clients must wait before another attempt.
 
+HTTP 429 is handled as a global rate-limit response even when an endpoint omits
+it from its response schemas. Shared execution returns status 429 and a normalized
+`{code: 429, message: "AppFolio rate limit exceeded."}` body, preserving
+`Retry-After`, the caller's idempotency key, upstream status, and correlation ID.
+The body is canceled without parsing, so empty, HTML, or unreadable upstream error
+bodies cannot hide the rate limit. All generated tool output contracts accept
+this normalized error. No automatic retry occurs. `create_work_order` reports
+`service_unavailable` and permits a later caller-initiated retry with the same
+key and unchanged input rather than reporting an unknown write outcome.
+
 Asynchronous endpoints return their accepted JobId without polling. The server
 records the job under its originating grant, whose immutable binding identifies
 user and connection. `getjobs` accepts only that grant's recorded jobs within
