@@ -11,7 +11,7 @@ for the distinction between implementation, automated evidence, and launch accep
 
 ## Run locally
 
-Use a supported Node.js version from `package.json` and its pinned pnpm version.
+Use Node.js 24 and the pnpm version pinned in `package.json`.
 
 ```sh
 pnpm install --frozen-lockfile
@@ -147,6 +147,6 @@ recovery, PostHog Logs, deployment verification and rollback. Application logs g
 to US PostHog project 735105. Browser analytics remains optional and is not evidence
 of server-log delivery. Debug logging and proactive alerts are not enabled.
 
-GitHub CI checks formatting, lint, build, types and tests across the configured
-Node.js matrix. Use Conventional Commits for merged changes. Release Please
+GitHub CI checks formatting, lint, build, types and tests on Node.js 24.
+Use Conventional Commits for merged changes. Release Please
 maintains release metadata; the application is not published to npm.
