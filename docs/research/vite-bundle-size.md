@@ -1,6 +1,7 @@
 # Vite bundle warning and the available fixes
 
-Research date: 2026-11-15. This note proposes a bundle change; it does not implement one.
+Research date: 2026-11-15. The lazy-loading implementation and measured results
+are recorded below.
 
 ## Conclusion
 
@@ -87,5 +88,50 @@ chunks the initial page loads, and exercise navigation pageviews and URL
 redaction with analytics enabled. The SDK should not be requested when analytics
 is disabled. Login and OAuth must continue to work if the SDK cannot load.
 Initial transfer and browser execution timings have not been measured in this
-research. No guaranteed byte reduction or warning removal is claimed before
-testing the candidate build.
+research.
+
+## Lazy-loading result
+
+The implementation changes the SDK import to `import('posthog-js')` inside the
+client effect. It shares one initialization promise across Strict Mode effects
+and remounts. A rejected import or initialization is contained at the optional
+analytics boundary; a later mount can try initialization again. The existing
+pageview, recording, and URL-redaction options are retained.
+[Implementation](../../src/components/posthog-analytics.tsx)
+
+Before and after builds ran on Node 24.22.1 with the same explicit test settings:
+
+```sh
+VITE_POSTHOG_KEY=phc_bundle_verification VITE_POSTHOG_HOST=https://posthog.invalid pnpm build
+```
+
+The baseline is commit `6ca41defbbae858904fea71fb73874963e3c54a9`. Sizes use the
+measurement command above, including Node's default gzip settings.
+
+| Client JavaScript  |     Before, bytes | After, bytes | Before gzip, bytes | After gzip, bytes |
+| ------------------ | ----------------: | -----------: | -----------------: | ----------------: |
+| Entry chunk        |           690,898 |      343,107 |            226,965 |           109,765 |
+| Separate SDK chunk | Included in entry |      346,890 |  Included in entry |           117,130 |
+| Account UI chunk   |           163,458 |      163,458 |             53,444 |            53,443 |
+
+No emitted client chunk exceeded 500 kB, and the chunk-size warning disappeared.
+The default warning threshold and chunk configuration were unchanged.
+[Build configuration](../../vite.config.ts)
+
+All 258 tests passed. Tests verify that server rendering and a missing token do
+not load the SDK, concurrent mounts initialize it once, failures do not interrupt
+the app, and real SDK enrichment still removes sensitive URL attribution.
+[Loader tests](../../src/components/posthog-analytics.test.tsx),
+[real SDK privacy test](../../src/components/posthog-analytics.integration.test.tsx)
+
+Chromium checks against the built local server confirmed that SSR does not
+preload the SDK, sign-in accepts input while its chunk is delayed, the real SDK
+emits initial and navigation pageviews with one download, and a blocked SDK
+chunk leaves sign-in usable without an unhandled browser error. The fixture
+modeled a desktop visitor because PostHog intentionally filters WebDriver
+traffic. Account reads and analytics transport were intercepted; these checks
+made no database writes or AppFolio calls and did not send events to PostHog.
+
+When analytics is enabled, the total JavaScript remains nearly the same. The
+change moves SDK loading after hydration; it does not remove the SDK from a
+visit that uses analytics. No browser latency improvement is claimed here.

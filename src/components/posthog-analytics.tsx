@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import posthog, { type PostHogConfig } from 'posthog-js'
+import type { PostHogConfig } from 'posthog-js'
 
 // URL query strings can contain OAuth codes or other sensitive values.
 function sanitizeProperties(properties: Record<string, unknown>) {
@@ -46,19 +46,27 @@ const options: Partial<PostHogConfig> = {
   },
 }
 
-let initialized = false
+let initialization: Promise<void> | undefined
 
 export function PostHogAnalytics() {
   useEffect(() => {
     const key = import.meta.env.VITE_POSTHOG_KEY?.trim()
-    if (!key || initialized) return
+    if (!key || initialization) return
 
-    posthog.init(key, {
-      ...options,
-      api_host:
-        import.meta.env.VITE_POSTHOG_HOST?.trim() || 'https://us.i.posthog.com',
-    })
-    initialized = true
+    initialization = import('posthog-js')
+      .then(({ default: posthog }) => {
+        posthog.init(key, {
+          ...options,
+          api_host:
+            import.meta.env.VITE_POSTHOG_HOST?.trim() ||
+            'https://us.i.posthog.com',
+        })
+      })
+      .catch(() => {
+        // Optional analytics must not interrupt the app if its SDK cannot load.
+        // A later mount can retry initialization after a failure.
+        initialization = undefined
+      })
   }, [])
 
   return null

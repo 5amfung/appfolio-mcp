@@ -1,5 +1,21 @@
 # Verification evidence
 
+## Lazy browser analytics
+
+On Node 24.22.1, production builds with an explicit browser analytics test token
+reduced the entry chunk from 690,898 to 343,107 bytes. The SDK became a separate
+346,890-byte chunk. No client chunk exceeded the unchanged 500 kB warning budget.
+Full measurements and reproduction commands are in
+[the bundle research note](research/vite-bundle-size.md#lazy-loading-result).
+
+All 258 tests, build, types, lint, formatting, and catalog checks passed. Chromium
+verified initial and navigation pageviews with the real SDK, one SDK download,
+interactive sign-in while the SDK was delayed, and usable sign-in with no
+unhandled error when that download was blocked. These browser checks intercepted
+account reads and analytics transport; they did not exercise login submission or
+OAuth and made no database writes or AppFolio calls. Existing URL-redaction tests
+passed against real SDK enrichment. Total SDK bytes are deferred, not eliminated.
+
 ## Preview URLs
 
 The owner requested removal of the manually maintained preview alias. Current
