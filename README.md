@@ -102,7 +102,7 @@ not established by browser login alone.
 
 ## Tools and writes
 
-Tool names are the source `operationId`. Inputs group parameters under `path`,
+The 181 generated API tool names are the source `operationId`. Inputs group parameters under `path`,
 `query`, `header`, and `body`. For example:
 
 ```json
@@ -118,6 +118,15 @@ Use that input with `getWorkOrders`. An unknown ID returns the upstream empty
 data array. File fields accept filename, mediaType and base64 bytes. A remote
 server cannot read a local agent file path. See the contract overrides for bounds,
 retry keys, asynchronous jobs and deprecated operation behavior.
+
+Two additional workflow tools support tenant maintenance requests. `validate_tenant`
+matches current tenant evidence against a shared tenant/unit snapshot and returns
+a required occupancy ID only on successful, work-order-ready validation.
+`create_work_order` preserves the narrow production creation contract while reusing
+the existing `createWorkOrder` operation. Configure snapshot lifetime with
+`TENANT_VALIDATION_CACHE_TTL_SECONDS`, default `43200` seconds, or 12 hours.
+See [tenant validation](docs/tenant-validation.md) for matching rules, shared-cache
+behavior, freshness, and latency verification.
 
 ## Verify
 

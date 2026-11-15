@@ -49,9 +49,17 @@ export async function ownedConnection(userId: string, connectionId: string) {
   return c
 }
 export async function activeGrant(grantId: string, userId: string) {
-  const [g] = await getDb()
-    .select()
+  const [bound] = await getDb()
+    .select({ grant: grants, connection: connections })
     .from(grants)
+    .leftJoin(
+      connections,
+      and(
+        eq(connections.id, grants.connectionId),
+        eq(connections.userId, userId),
+        isNull(connections.deletedAt),
+      ),
+    )
     .where(
       and(
         eq(grants.id, grantId),
@@ -59,10 +67,10 @@ export async function activeGrant(grantId: string, userId: string) {
         isNull(grants.revokedAt),
       ),
     )
-  if (!g?.approvedAt)
+  if (!bound?.grant.approvedAt)
     throw new AppError('authorization_removed_reauthorize', 401)
-  const c = await ownedConnection(userId, g.connectionId)
-  return { grant: g, connection: c }
+  if (!bound.connection) throw new AppError('connection_unavailable', 404)
+  return { grant: bound.grant, connection: bound.connection }
 }
 export const grantClaim = 'https://appfolio-mcp/grant'
 export const claimsSchema = z.object({

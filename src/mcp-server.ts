@@ -14,6 +14,16 @@ import { log, finishLogs } from '@/server/logging'
 import { privateJson, jsonBody } from '@/server/http'
 import { catalog, ajv, outputContract } from '@/appfolio/contract'
 import { execute } from '@/appfolio/execute'
+import {
+  validateTenant,
+  validateTenantInputSchema,
+  validateTenantOutputSchema,
+} from '@/mcp-tools/validate-tenant'
+import {
+  createWorkOrder,
+  createWorkOrderInputSchema,
+  createWorkOrderOutputSchema,
+} from '@/mcp-tools/create-work-order'
 
 const schemaValidator = new AjvJsonSchemaValidator(ajv)
 function mcpSchema(value: Record<string, unknown>) {
@@ -30,6 +40,31 @@ const tools = catalog.operations.map((op) => ({
   input: mcpSchema(op.inputSchema),
   output: mcpSchema(outputContract(op)),
 }))
+// Handwritten workflows are separate from the generated upstream operation catalog.
+const validateTenantSchemas = {
+  input: mcpSchema(
+    z.toJSONSchema(validateTenantInputSchema, {
+      target: 'draft-7',
+      io: 'input',
+    }),
+  ),
+  output: mcpSchema({
+    type: 'object',
+    ...z.toJSONSchema(validateTenantOutputSchema, { target: 'draft-7' }),
+  }),
+}
+const createWorkOrderSchemas = {
+  input: mcpSchema(
+    z.toJSONSchema(createWorkOrderInputSchema, {
+      target: 'draft-7',
+      io: 'input',
+    }),
+  ),
+  output: mcpSchema({
+    type: 'object',
+    ...z.toJSONSchema(createWorkOrderOutputSchema, { target: 'draft-7' }),
+  }),
+}
 
 export function protocolHandler(identity: {
   userId: string
@@ -56,6 +91,38 @@ export function protocolHandler(identity: {
           },
           async (input) => execute(op, input, identity),
         )
+      server.registerTool(
+        'validate_tenant',
+        {
+          description:
+            'Match tenant name, phone, optional email, and rented-unit address using the authorized connection. Success requires exactly one Current tenant-unit match and a valid occupancy ID ready for work-order creation. A complete tenant/unit snapshot is shared across function instances, with a 12-hour default TTL configured by TENANT_VALIDATION_CACHE_TTL_SECONDS. Cache hits avoid AppFolio requests; misses refill from AppFolio and can take several seconds. Cached records may be stale within the TTL. Missing occupancy or ambiguity requires review. Inspect status and error.failureClass; only authenticated permits the next creation step. Metadata reports cache hit/miss, snapshot timing, and correlation ID. This matches records, not proof of phone or email possession.',
+          inputSchema: validateTenantSchemas.input,
+          outputSchema: validateTenantSchemas.output,
+          annotations: {
+            readOnlyHint: true,
+            destructiveHint: false,
+            idempotentHint: true,
+            openWorldHint: true,
+          },
+        },
+        async (input) => validateTenant(input, identity),
+      )
+      server.registerTool(
+        'create_work_order',
+        {
+          description:
+            'Create a work order using the occupancy ID from successful validate_tenant and a caller-selected priority. Sends description as JobDescription and always uses Status New, Type Internal, and PermissionToEnter false. Prior tenant validation is coordinated by the caller. Returns created with the AppFolio ID and optional link, or a specific failure status. outcome_unknown means the write may have completed; confirm AppFolio before retrying. Preserve metadata.idempotencyKey with unchanged arguments under the same authorization within 24 hours and respect metadata.retryAfter. Do not start a new write with a new key to recover an uncertain outcome. The general createWorkOrder tool remains available for other creation options.',
+          inputSchema: createWorkOrderSchemas.input,
+          outputSchema: createWorkOrderSchemas.output,
+          annotations: {
+            readOnlyHint: false,
+            destructiveHint: false,
+            idempotentHint: false,
+            openWorldHint: true,
+          },
+        },
+        async (input) => createWorkOrder(input, identity),
+      )
       return server
     },
     { legacy: 'stateless' },
