@@ -152,3 +152,6 @@ vite.config.ts.timestamp-*
 # TanStack Start generated files and local demo data
 .tanstack/
 count.txt
+
+# Linked deployment configuration
+.vercel/

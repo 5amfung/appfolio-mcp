@@ -10,17 +10,54 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as McpDemoRouteImport } from './routes/mcp-demo'
+import { Route as ConsentRouteImport } from './routes/consent'
+import { Route as PingRouteImport } from './routes/ping'
+import { Route as SelectConnectionRouteImport } from './routes/select-connection'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SignInRouteImport } from './routes/sign-in'
+import { Route as DotwellKnownSplatRouteImport } from './routes/[.]well-known.$'
+import { Route as ApiAccountRouteImport } from './routes/api.account'
 import { Route as ApiMcpRouteImport } from './routes/api.mcp'
+import { Route as ApiAuthSplatRouteImport } from './routes/api.auth.$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const McpDemoRoute = McpDemoRouteImport.update({
-  id: '/mcp-demo',
-  path: '/mcp-demo',
+const ConsentRoute = ConsentRouteImport.update({
+  id: '/consent',
+  path: '/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PingRoute = PingRouteImport.update({
+  id: '/ping',
+  path: '/ping',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SelectConnectionRoute = SelectConnectionRouteImport.update({
+  id: '/select-connection',
+  path: '/select-connection',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignInRoute = SignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DotwellKnownSplatRoute = DotwellKnownSplatRouteImport.update({
+  id: '/.well-known/$',
+  path: '/.well-known/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAccountRoute = ApiAccountRouteImport.update({
+  id: '/api/account',
+  path: '/api/account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiMcpRoute = ApiMcpRouteImport.update({
@@ -28,35 +65,99 @@ const ApiMcpRoute = ApiMcpRouteImport.update({
   path: '/api/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/mcp-demo': typeof McpDemoRoute
+  '/consent': typeof ConsentRoute
+  '/ping': typeof PingRoute
+  '/select-connection': typeof SelectConnectionRoute
+  '/settings': typeof SettingsRoute
+  '/sign-in': typeof SignInRoute
+  '/.well-known/$': typeof DotwellKnownSplatRoute
+  '/api/account': typeof ApiAccountRoute
   '/api/mcp': typeof ApiMcpRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/mcp-demo': typeof McpDemoRoute
+  '/consent': typeof ConsentRoute
+  '/ping': typeof PingRoute
+  '/select-connection': typeof SelectConnectionRoute
+  '/settings': typeof SettingsRoute
+  '/sign-in': typeof SignInRoute
+  '/.well-known/$': typeof DotwellKnownSplatRoute
+  '/api/account': typeof ApiAccountRoute
   '/api/mcp': typeof ApiMcpRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/mcp-demo': typeof McpDemoRoute
+  '/consent': typeof ConsentRoute
+  '/ping': typeof PingRoute
+  '/select-connection': typeof SelectConnectionRoute
+  '/settings': typeof SettingsRoute
+  '/sign-in': typeof SignInRoute
+  '/.well-known/$': typeof DotwellKnownSplatRoute
+  '/api/account': typeof ApiAccountRoute
   '/api/mcp': typeof ApiMcpRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/mcp-demo' | '/api/mcp'
+  fullPaths:
+    | '/'
+    | '/consent'
+    | '/ping'
+    | '/select-connection'
+    | '/settings'
+    | '/sign-in'
+    | '/.well-known/$'
+    | '/api/account'
+    | '/api/mcp'
+    | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/mcp-demo' | '/api/mcp'
-  id: '__root__' | '/' | '/mcp-demo' | '/api/mcp'
+  to:
+    | '/'
+    | '/consent'
+    | '/ping'
+    | '/select-connection'
+    | '/settings'
+    | '/sign-in'
+    | '/.well-known/$'
+    | '/api/account'
+    | '/api/mcp'
+    | '/api/auth/$'
+  id:
+    | '__root__'
+    | '/'
+    | '/consent'
+    | '/ping'
+    | '/select-connection'
+    | '/settings'
+    | '/sign-in'
+    | '/.well-known/$'
+    | '/api/account'
+    | '/api/mcp'
+    | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  McpDemoRoute: typeof McpDemoRoute
+  ConsentRoute: typeof ConsentRoute
+  PingRoute: typeof PingRoute
+  SelectConnectionRoute: typeof SelectConnectionRoute
+  SettingsRoute: typeof SettingsRoute
+  SignInRoute: typeof SignInRoute
+  DotwellKnownSplatRoute: typeof DotwellKnownSplatRoute
+  ApiAccountRoute: typeof ApiAccountRoute
   ApiMcpRoute: typeof ApiMcpRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -68,11 +169,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/mcp-demo': {
-      id: '/mcp-demo'
-      path: '/mcp-demo'
-      fullPath: '/mcp-demo'
-      preLoaderRoute: typeof McpDemoRouteImport
+    '/consent': {
+      id: '/consent'
+      path: '/consent'
+      fullPath: '/consent'
+      preLoaderRoute: typeof ConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ping': {
+      id: '/ping'
+      path: '/ping'
+      fullPath: '/ping'
+      preLoaderRoute: typeof PingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/select-connection': {
+      id: '/select-connection'
+      path: '/select-connection'
+      fullPath: '/select-connection'
+      preLoaderRoute: typeof SelectConnectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-in': {
+      id: '/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/.well-known/$': {
+      id: '/.well-known/$'
+      path: '/.well-known/$'
+      fullPath: '/.well-known/$'
+      preLoaderRoute: typeof DotwellKnownSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/account': {
+      id: '/api/account'
+      path: '/api/account'
+      fullPath: '/api/account'
+      preLoaderRoute: typeof ApiAccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/mcp': {
@@ -82,13 +225,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiMcpRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  McpDemoRoute: McpDemoRoute,
+  ConsentRoute: ConsentRoute,
+  PingRoute: PingRoute,
+  SelectConnectionRoute: SelectConnectionRoute,
+  SettingsRoute: SettingsRoute,
+  SignInRoute: SignInRoute,
+  DotwellKnownSplatRoute: DotwellKnownSplatRoute,
+  ApiAccountRoute: ApiAccountRoute,
   ApiMcpRoute: ApiMcpRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

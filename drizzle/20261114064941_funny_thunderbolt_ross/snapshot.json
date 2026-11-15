@@ -1,0 +1,47 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "e55d4d99-2736-4dbd-b5c2-f97db5cfcc43",
+  "prevIds": [
+    "c1345f02-219e-45c0-9abe-e7a6eb53f3c4"
+  ],
+  "footprints": [
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "appfolio_connection",
+        "identifier_hint"
+      ],
+      "writes": [
+        "s|col|public.appfolio_connection.identifier_hint",
+        "n|col|public.appfolio_connection.identifier_hint",
+        "e|col|public.appfolio_connection.identifier_hint"
+      ],
+      "reads": [
+        "n|tbl|public.appfolio_connection",
+        "n|sch|public"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "appfolio_connection",
+        "name": "identifier_hint",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'Credentials saved'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    }
+  ]
+}
