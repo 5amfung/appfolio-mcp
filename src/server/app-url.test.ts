@@ -17,16 +17,16 @@ it('uses the configured origin for local and production auth', () => {
   vi.stubEnv('BETTER_AUTH_URL', 'https://appfolio.example/')
   expect(appUrl()).toBe('https://appfolio.example')
 })
-it('uses a stable branch URL for an isolated PR preview', () => {
+it('uses the exact deployment URL even when a branch URL is available', () => {
   vi.stubEnv('VERCEL_ENV', 'preview')
   vi.stubEnv('VERCEL_BRANCH_URL', 'appfolio-git-feature.vercel.app')
   vi.stubEnv('VERCEL_URL', 'appfolio-unique-deployment.vercel.app')
-  expect(appUrl()).toBe('https://appfolio-git-feature.vercel.app')
-})
-it('falls back to the deployment URL for previews without a branch alias', () => {
-  vi.stubEnv('VERCEL_ENV', 'preview')
-  vi.stubEnv('VERCEL_URL', 'appfolio-unique-deployment.vercel.app')
   expect(appUrl()).toBe('https://appfolio-unique-deployment.vercel.app')
+})
+it('falls back to the automatic branch URL when the deployment URL is absent', () => {
+  vi.stubEnv('VERCEL_ENV', 'preview')
+  vi.stubEnv('VERCEL_BRANCH_URL', 'appfolio-git-feature.vercel.app')
+  expect(appUrl()).toBe('https://appfolio-git-feature.vercel.app')
 })
 it('never derives the production issuer from a preview or deployment URL', () => {
   vi.stubEnv('VERCEL_ENV', 'production')

@@ -1,8 +1,8 @@
 # Preview and production deployments
 
 Use the existing Vercel project `appfolio-mcp` in team `doughyrematch`.
-The temporary `appfolio-mcp-preview` project was deleted after its public
-alias moved back. Do not create additional Vercel projects for PRs.
+The temporary preview project was deleted. Do not create additional Vercel
+projects or manually assign a shared hostname for PR previews.
 
 ## Release policy
 
@@ -70,15 +70,18 @@ the production keys. A private recovery copy of generated production keys is
 stored in the ignored `.cache/production-keys.json`; retain an owner-controlled
 secure backup before publishing production.
 
-PRs derive their OAuth origin from Vercel's stable branch URL, falling back to
-the deployment URL. Do not set one shared `BETTER_AUTH_URL` for every Preview.
-An intentional branch-specific override keeps the pending Release Please PR's
-review origin at `https://appfolio-mcp-preview.vercel.app` when its alias is moved.
+PRs derive their OAuth origin from Vercel's unique deployment URL, falling back
+to its automatically managed branch URL if the deployment URL is unavailable.
+Leave `BETTER_AUTH_URL` unset or empty in Preview, including branch-specific
+overrides. Do not assign or maintain a shared preview hostname. Copy the exact
+deployment URL from Vercel into the MCP client and reauthorize when changing it.
 
 Application OAuth remains required for tools, regardless of Vercel Deployment
-Protection. Make only the intended testing host publicly reachable with an
-alias-specific exception. No preview access cookie is needed for that host.
-Each preview has its own accounts and connection selection.
+Protection. A client that cannot authenticate to Vercel, such as ChatGPT Desktop,
+needs its selected deployment URL to be publicly reachable. A Vercel login or
+share link alone does not establish public MCP access. Verify the deployment's
+access settings before client testing. Each PR preview has its own accounts and
+connection selection.
 
 ## Initial consolidation
 
@@ -89,11 +92,10 @@ eligible for production. Project-wide pause is an emergency control that also
 blocks new previews; do not use it as the normal release gate.
 
 The original project's PR preview passed deployed server and browser checks.
-The public alias moved there, and the owner deleted the temporary project through
-the Vercel dashboard. After merging the application PR, use the pending Release
-Please PR's isolated preview for release acceptance and move the review alias to
-that deployment. Production remains unavailable until that Release Please PR is
-merged.
+The owner deleted the temporary project through the Vercel dashboard. After
+merging the application PR, use the pending Release Please PR's isolated preview
+for release acceptance. Select its deployment URL directly in the client.
+Production remains unavailable until that Release Please PR is merged.
 
 Verify with `BASE_URL=<preview-origin> EXPECT_PRODUCTION_UNPUBLISHED=1 python3
 scripts/verify-public-preview.py` before the first release. Then run the

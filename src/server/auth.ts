@@ -13,7 +13,7 @@ export const mcpScopes = ['mcp:tools', 'offline_access']
 export function appUrl() {
   const previewHost =
     process.env.VERCEL_ENV === 'preview'
-      ? process.env.VERCEL_BRANCH_URL || process.env.VERCEL_URL
+      ? process.env.VERCEL_URL || process.env.VERCEL_BRANCH_URL
       : undefined
   const url =
     process.env.BETTER_AUTH_URL ||
