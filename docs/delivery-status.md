@@ -21,10 +21,9 @@ the original Vercel project under the
 ## Verification
 
 All 181 tools have input/response schemas, descriptions and contract fixtures.
-The suite has 256 tests, including release eligibility, shell build/skip mapping,
+The suite has 258 tests, including release eligibility, shell build/skip mapping,
 database-branch guards and one-time preview initialization. Build, types, lint,
-formatting and catalog checks pass. CI passed the deployment-policy commit on
-all three supported Node versions.
+formatting and catalog checks pass. CI verifies the supported Node.js 24 runtime.
 
 The original project's preview created its own Neon branch and applied migrations
 there. The production branch still has no application schema. Without a Vercel
