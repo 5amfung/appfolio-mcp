@@ -11,7 +11,13 @@ import { activeGrant, grantClaim, selectedGrant } from './grants'
 export const mcpScopes = ['mcp:tools', 'offline_access']
 
 export function appUrl() {
-  const url = process.env.BETTER_AUTH_URL
+  const previewHost =
+    process.env.VERCEL_ENV === 'preview'
+      ? process.env.VERCEL_BRANCH_URL || process.env.VERCEL_URL
+      : undefined
+  const url =
+    process.env.BETTER_AUTH_URL ||
+    (previewHost ? `https://${previewHost}` : undefined)
   if (!url)
     throw new Error('BETTER_AUTH_URL must be configured for this environment')
   return url.replace(/\/$/, '')

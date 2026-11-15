@@ -14,6 +14,7 @@ concurrency:
 
 jobs:
   release-please:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -22,20 +23,40 @@ jobs:
       pull-requests: write
     steps:
       - name: Check out repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
 
       - name: Set up Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '24'
           package-manager-cache: false
 
       - name: Update release pull request or publish release
-        uses: googleapis/release-please-action@v4
+        id: release
+        uses: googleapis/release-please-action@8b8fd2cc23b2e18957157a9d923d75aa0c6f6ad5 # v4
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}
           target-branch: main
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+
+      # Vercel's Git integration owns deployment. Both this check and its Ignored
+      # Build Step use the same policy; no Vercel token or deploy hook is needed.
+      - name: Verify the published release is eligible for production
+        if: steps.release.outputs.release_created == 'true'
+        env:
+          VERCEL_GIT_COMMIT_REF: main
+          VERCEL_GIT_COMMIT_SHA: ${{ steps.release.outputs.sha }}
+        run: node scripts/check-release.mjs
+
+      - name: Record release deployment policy
+        env:
+          RELEASE_CREATED: ${{ steps.release.outputs.release_created }}
+        run: |
+          if [ "$RELEASE_CREATED" = "true" ]; then
+            echo 'Release published. Vercel may deploy the verified Release Please merge from main.' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'No release published. Ordinary merges to main do not build or update production.' >> "$GITHUB_STEP_SUMMARY"
+          fi

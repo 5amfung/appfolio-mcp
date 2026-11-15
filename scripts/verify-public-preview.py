@@ -68,11 +68,13 @@ def main():
                       ('token_endpoint', '/oauth2/token')]:
         check(metadata.get(key) == issuer + path, key + ' stays on the preview origin')
 
-    for url in ['https://appfolio-mcp-zeta.vercel.app',
-                'https://appfolio-mcp-doughyrematch.vercel.app']:
-        status, headers, _ = request(url + '/ping')
-        check(status == 503 and headers.get('x-vercel-error') == 'DEPLOYMENT_PAUSED',
-              urllib.parse.urlsplit(url).hostname + ' remains paused')
+    if os.environ.get('EXPECT_PRODUCTION_UNPUBLISHED') == '1':
+        for url in ['https://appfolio-mcp-zeta.vercel.app',
+                    'https://appfolio-mcp-doughyrematch.vercel.app']:
+            status, headers, _ = request(url + '/ping')
+            check(status in (404, 503) and headers.get('x-vercel-error') in
+                  ('DEPLOYMENT_PAUSED', 'DEPLOYMENT_NOT_FOUND', 'NOT_FOUND'),
+                  urllib.parse.urlsplit(url).hostname + ' has no published production app')
 
 
 if __name__ == '__main__':

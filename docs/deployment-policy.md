@@ -1,0 +1,98 @@
+# Preview and production deployments
+
+Use the existing Vercel project `appfolio-mcp` in team `doughyrematch`.
+The temporary `appfolio-mcp-preview` project is being retired after its public
+alias is moved back. Do not create additional Vercel projects for PRs.
+
+## Release policy
+
+Vercel's Git integration owns deployments. `main` remains the production branch.
+GitHub Actions runs tests and Release Please. No Vercel token, deploy hook or
+additional release branch is required.
+
+For every proposed production build, the Ignored Build Step runs
+`scripts/check-release.mjs`. It queries public GitHub metadata and requires:
+
+- The source branch is `main` and the source SHA is valid.
+- That exact SHA is the merge commit of a merged PR into `main`.
+- The PR comes from this repository's Release Please branch.
+- The PR has a recognized release label and Release Please author.
+
+Ordinary merges are skipped. API failures, missing scripts, invalid responses
+and script failures also skip production. Vercel may show a skipped deployment
+record, but no production build or domain update occurs. The shell command in
+`vercel.json` translates checker success to Vercel's unusual build/skip exit codes.
+Tests exercise both the policy and the real shell command.
+
+The Release Please workflow uses the same checker when it publishes a release.
+Merging the application PR updates the pending Release Please PR; it does not
+publish production. Merging the Release Please PR is the production release
+decision. Do not merge that PR until launch verification is accepted.
+
+The tokenless check relies on this repository being public. If the repository
+becomes private, production remains skipped until an authenticated policy is
+configured. If GitHub is unavailable, retry the release deployment after it
+recovers. Do not replace the check with a permissive fallback.
+
+## Database mapping
+
+| Deployment  | Neon database                                                                       |
+| ----------- | ----------------------------------------------------------------------------------- |
+| Production  | Existing project `wild-flower-12064506`, branch `production`                        |
+| PR Preview  | Integration-created `preview/<git-branch>` child of the default `production` branch |
+| Development | Optional integration-created `vercel-dev` branch                                    |
+
+Use the existing Neon-managed Vercel integration. It supplies Production
+connections and injects each Preview deployment's own connections. The old
+shared Preview connection is no longer a usable fallback. Automatic cleanup
+can remove obsolete preview branches when their Git branches are deleted.
+
+`DATABASE_URL` is pooled for the running app. Migrations use
+`DATABASE_URL_UNPOOLED`. Both must identify the same database and branch.
+`NEON_PRODUCTION_ENDPOINT_ID` identifies the existing production compute.
+The build rejects a Preview connection to that compute and rejects a Production
+connection to any other compute, before migrations run.
+
+The build applies provider and application migrations before compiling the app.
+On a new Preview database, it clears copied production accounts, authorizations,
+encrypted connections and signing keys once. This prevents a PR from inheriting
+usable production credentials or signing keys encrypted with another environment's
+secret. An initialization marker and transaction lock preserve test data on later
+builds of the same PR. Production never runs this initialization.
+
+## OAuth and configuration
+
+Production uses `https://appfolio-mcp-zeta.vercel.app` as its canonical origin,
+with separate production auth/encryption keys. Preview variables never include
+the production keys. A private recovery copy of generated production keys is
+stored in the ignored `.cache/production-keys.json`; retain an owner-controlled
+secure backup before publishing production.
+
+PRs derive their OAuth origin from Vercel's stable branch URL, falling back to
+the deployment URL. Do not set one shared `BETTER_AUTH_URL` for every Preview.
+An intentional branch-specific override keeps the pending Release Please PR's
+review origin at `https://appfolio-mcp-preview.vercel.app` when its alias is moved.
+
+Application OAuth remains required for tools, regardless of Vercel Deployment
+Protection. Make only the intended testing host publicly reachable with an
+alias-specific exception. No preview access cookie is needed for that host.
+Each preview has its own accounts and connection selection.
+
+## Initial consolidation
+
+The initial unconfigured Production deployment has been deleted. The original
+project now has no Production deployments. Its project-wide pause must be lifted
+to build PR previews. Automatic approval review requires explicit owner approval
+for unpausing because that operation can also restore production domain assignment.
+The release filter is installed before that step; no ordinary merge is eligible
+for production.
+
+After previews are verified on the original project, merge the application PR,
+verify the pending Release Please PR's isolated preview, move the public review
+alias, and delete the temporary Vercel project. The Vercel connector exposes only
+a deletion link, so the owner must confirm project deletion in the dashboard.
+
+Verify with `BASE_URL=<preview-origin> EXPECT_PRODUCTION_UNPUBLISHED=1 python3
+scripts/verify-public-preview.py` before the first release. Then run the
+real-server read-only and browser scripts with the four designated AppFolio test
+variables. Do not enable mutation tests against another AppFolio database.

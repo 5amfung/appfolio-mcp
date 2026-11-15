@@ -1,0 +1,5 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "pnpm db:apply && pnpm build",
+  "ignoreCommand": "if [ \"$VERCEL_ENV\" != \"production\" ]; then exit 1; fi; if node scripts/check-release.mjs; then exit 1; else exit 0; fi"
+}
