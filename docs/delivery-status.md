@@ -1,12 +1,13 @@
 # Delivery status
 
-The AppFolio MCP application is implemented. Deployment configuration is being
-consolidated into the original Vercel project under the
+The AppFolio MCP application is implemented. Deployment configuration uses
+the original Vercel project under the
 [deployment policy](deployment-policy.md).
 
 - Application PR: https://github.com/5amfung/appfolio-mcp/pull/15.
 - Vercel project: appfolio-mcp, in team doughyrematch.
-- Public review endpoint: https://appfolio-mcp-preview.vercel.app/api/mcp.
+- Review endpoint: the selected Vercel Preview deployment URL plus `/api/mcp`.
+- No manually maintained preview alias. Clients select each deployment directly.
 - Production origin: https://appfolio-mcp-zeta.vercel.app.
 - Neon project: wild-flower-12064506.
 - Production/default Neon branch: production.
@@ -15,8 +16,7 @@ consolidated into the original Vercel project under the
   unpublished until a Release Please PR is merged.
 - The original project was unpaused with explicit owner approval after installing
   the release filter and confirming no Production deployments remained.
-- The public preview alias moved back to the original project. The owner deleted
-  the extra appfolio-mcp-preview Vercel project.
+- The owner deleted the extra preview Vercel project.
 
 ## Verification
 

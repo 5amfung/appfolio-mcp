@@ -13,7 +13,7 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 
 
 opener = urllib.request.build_opener(NoRedirect())
-base = os.environ.get('BASE_URL', 'https://appfolio-mcp-preview.vercel.app').rstrip('/')
+base = os.environ.get('BASE_URL', '').rstrip('/')
 
 
 def request(url):
@@ -31,6 +31,7 @@ def check(condition, label):
 
 
 def main():
+    check(bool(base), 'BASE_URL specifies the exact preview deployment origin')
     status, headers, _ = request(base + '/ping')
     check(status == 200 and 'no-store' in headers.get('Cache-Control', ''),
           'preview health is public and uncached')

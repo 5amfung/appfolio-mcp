@@ -16,18 +16,18 @@
 
 No values belong in source control, screenshots, reports or PR descriptions.
 Production must not inherit test credentials or the preview database/keyring.
-The canonical preview origin is `https://appfolio-mcp-preview.vercel.app`.
-That hostname has a Vercel Deployment Protection Exception for public client
-testing. It needs no Vercel access cookie. The exception applies only to that
-preview alias; other URLs retain their protection. Production is published only
-after a verified Release Please merge.
-Application OAuth and private account/connection checks still apply. To restore
-the platform login requirement, revoke the alias's `alias-protection-override`
-exception, rather than changing application auth or unpausing the project.
-Run `python3 scripts/verify-public-preview.py` to check public discovery,
-application auth enforcement without cookies or credentials. Before the first
-release, set `EXPECT_PRODUCTION_UNPUBLISHED=1` to check both production aliases
-remain unavailable.
+Each Preview uses its unique Vercel deployment origin. Do not assign a shared
+preview alias or set a Preview `BETTER_AUTH_URL` override. Production is published
+only after a verified Release Please merge. Application OAuth and private
+account/connection checks still apply.
+
+Vercel Deployment Protection is separate from application OAuth. Verify public
+access for a selected deployment before using clients that cannot authenticate
+to Vercel. Run `BASE_URL=<deployment-origin> python3
+scripts/verify-public-preview.py` to check public discovery and application auth
+enforcement without cookies or credentials. The script requires an explicit
+origin and does not default to a shared hostname. Before the first release, set
+`EXPECT_PRODUCTION_UNPUBLISHED=1` to check both production aliases remain unavailable.
 The final production origin must be established before issuing production grants.
 Changing the origin changes issuer/audience and requires client reauthorization.
 
@@ -43,10 +43,11 @@ connections. The build checks the database target, migrates it and initializes a
 new preview's auth/application state once. Never configure a shared Preview
 database fallback or copy production auth/encryption keys into Preview.
 
-Normal PRs derive their OAuth origin from the Vercel branch URL. Only the intended
-public review branch has a branch-specific canonical origin. Verify the exact
-commit and Preview target before moving the public alias, then run public-access,
-real-server read-only and browser checks.
+PRs derive their OAuth origin from the unique Vercel deployment URL, with the
+automatically managed branch URL as a fallback. Verify the exact commit and
+Preview target, then run public-access, real-server read-only and browser checks
+against that deployment URL. Update the client URL and reauthorize for each
+deployment you test.
 
 The local ignored `.vercel/project.json` must link to `appfolio-mcp`; verify the
 link before a CLI deployment. Production normally deploys through the release

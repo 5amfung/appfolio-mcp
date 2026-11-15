@@ -1,5 +1,14 @@
 # Verification evidence
 
+## Preview URLs
+
+The owner requested removal of the manually maintained preview alias. Current
+client instructions use the exact Vercel deployment URL. Preview OAuth now prefers
+`VERCEL_URL` over the automatic branch URL, and the public verification script
+requires `BASE_URL`. Earlier public-access results below describe the alias that
+was used at the time. They do not establish public access to other deployment
+URLs. Vercel protection and OAuth must be checked on the selected deployment.
+
 ## Single-project deployment policy
 
 The Neon-managed integration is connected to the original `appfolio-mcp`

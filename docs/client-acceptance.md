@@ -5,19 +5,24 @@ Record each client's exact version, OS, protocol revision, registration method,
 callback URI, configuration name and evidence. Hosted/headless environments are
 separate and remain unverified until explicitly tested.
 
-Use `https://appfolio-mcp-preview.vercel.app/api/mcp`. This preview hostname is
-publicly reachable through a Vercel Deployment Protection Exception. No
-`APPFOLIO_PREVIEW_COOKIE`, Cookie header, bypass link or Vercel login is needed.
-Remove any old Cookie header from existing client entries. Application signup,
-sign-in, explicit connection selection and OAuth consent remain required.
-Production remains unpublished until a Release Please PR is merged. Other
-deployment URLs retain Vercel protection. Each PR uses its own Neon database;
-its accounts and grants are separate from production and other previews.
+Open the original `appfolio-mcp` project's Deployments tab in Vercel. Select the
+Preview deployment for the commit you want to test. Copy its unique deployment
+URL and append `/api/mcp`. Replace `YOUR-DEPLOYMENT.vercel.app` in the examples
+below with that hostname. No manually maintained preview alias is used.
+
+Check whether Vercel Deployment Protection blocks that URL before client testing.
+ChatGPT Desktop needs public access to the MCP and OAuth endpoints; a Vercel login
+or share link alone is insufficient. Application signup, sign-in, explicit
+connection selection and OAuth consent remain required. Reauthorize the client
+when changing its server URL. Production remains unpublished until a Release
+Please PR is merged. Each PR uses its own Neon database; its accounts and grants
+are separate from production and other previews.
 
 ## ChatGPT Desktop
 
-Add a custom MCP server in ChatGPT's Plugins settings. Use the URL above and
-choose OAuth authentication with automatic client registration. Do not enter
+Add a custom MCP server in ChatGPT's Plugins settings. Use the selected
+deployment's MCP URL and choose OAuth authentication with automatic client
+registration. Do not enter
 AppFolio credentials as ChatGPT's OAuth client ID or secret. Those credentials
 belong in the application's connection form after sign-in.
 
@@ -37,7 +42,7 @@ Cursor remote-server entry:
 {
   "mcpServers": {
     "appfolio-preview": {
-      "url": "https://appfolio-mcp-preview.vercel.app/api/mcp"
+      "url": "https://YOUR-DEPLOYMENT.vercel.app/api/mcp"
     }
   }
 }
@@ -50,7 +55,7 @@ Claude Code HTTP entry:
   "mcpServers": {
     "appfolio-preview": {
       "type": "http",
-      "url": "https://appfolio-mcp-preview.vercel.app/api/mcp"
+      "url": "https://YOUR-DEPLOYMENT.vercel.app/api/mcp"
     }
   }
 }
@@ -60,7 +65,7 @@ Codex local HTTP entry:
 
 ```toml
 [mcp_servers.appfolio-preview]
-url = "https://appfolio-mcp-preview.vercel.app/api/mcp"
+url = "https://YOUR-DEPLOYMENT.vercel.app/api/mcp"
 ```
 
 Authorize the server through its normal OAuth UI. The deployed server advertises
