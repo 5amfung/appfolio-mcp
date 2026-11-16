@@ -34,6 +34,9 @@ The lookup sequence is:
 4. Verify street, city, and apartment or unit when applicable. Require exactly one
    acceptable Current match and a valid occupancy UUID before returning success.
 
+Recognized unit labels in either AppFolio address line require the matching
+apartment. Conflicting unit identifiers between the address lines require review.
+
 A name or phone mismatch makes no unit request. Unit data is not prefetched into
 a portfolio-wide index. Each matching unit is cached separately; a failure to
 fetch one unit does not invalidate the tenant inventory or another unit's cache.

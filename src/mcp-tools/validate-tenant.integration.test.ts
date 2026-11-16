@@ -141,7 +141,7 @@ const wireResponse = z.object({
     }),
   }),
 })
-async function protocolCall(input = evidence) {
+async function protocolCall(input: unknown = evidence) {
   const response = await protocolHandler(identity).fetch(
     new Request('http://localhost:3000/api/mcp', {
       method: 'POST',
@@ -210,6 +210,53 @@ it('does not query units when first name or phone fails to match', async () => {
   }
   expect(runOperation).toHaveBeenCalledTimes(1)
   expect(vi.mocked(runOperation).mock.calls[0]?.[0].name).toBe('getTenants')
+})
+
+it('requires the Address2 apartment through MCP on a cache miss and validates it on cache hits', async () => {
+  const response = {
+    status: 200,
+    metadata: {
+      correlationId: identity.correlationId,
+      upstreamStatus: 200,
+      retryAfter: null,
+      idempotentReplayed: false,
+      idempotencyKey: undefined,
+    },
+  }
+  vi.mocked(runOperation)
+    .mockResolvedValueOnce({ ...response, data: { data: tenants } })
+    .mockResolvedValueOnce({
+      ...response,
+      data: {
+        data: [
+          {
+            Id: unitId(0),
+            Address1: '10 Market Street',
+            Address2: 'Apt 1',
+            City: 'San Francisco',
+          },
+        ],
+      },
+    })
+  const missingUnit = await protocolCall({
+    ...evidence,
+    address: { streetAddress: '10 Market Street', city: 'San Francisco' },
+  })
+  expect(missingUnit.status).toBe('needs_review')
+  expect(missingUnit.metadata.cache).toBe('miss')
+  expect(runOperation).toHaveBeenCalledTimes(2)
+  vi.mocked(runOperation).mockClear()
+
+  const correct = await protocolCall()
+  expect(correct.status).toBe('authenticated')
+  expect(correct.tenant?.occupancyId).toBe(occupancyId)
+  expect(correct.metadata.cache).toBe('hit')
+  const wrong = await protocolCall({
+    ...evidence,
+    address: { ...evidence.address, unit: '2' },
+  })
+  expect(wrong.status).toBe('not_authenticated')
+  expect(runOperation).not.toHaveBeenCalled()
 })
 
 it('fetches a different matched unit lazily without downloading the tenant inventory again', async () => {

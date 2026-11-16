@@ -66,8 +66,13 @@ const standaloneLabeledUnitPattern =
 
 export function normalizeAppfolioUnitAddress(
   unit: AppfolioUnit,
-): NormalizedAddress {
+): NormalizedAddress & { conflictingUnits: boolean } {
   const parsed = parseStreetAndUnit(unit.Address1)
+  const secondary = parseStreetAndUnit(unit.Address2)
+  const primaryUnit = normalizeUnit(parsed.unit)
+  // Only a recognized whole-line unit qualifies; Address2 can contain other text.
+  const secondaryUnit =
+    secondary.street === '' ? normalizeUnit(secondary.unit) : undefined
 
   return {
     ...normalizeAddress({
@@ -75,8 +80,12 @@ export function normalizeAppfolioUnitAddress(
       postalCode: unit.Zip,
       state: unit.State,
       streetAddress: parsed.street ?? unit.Address1 ?? undefined,
-      unit: parsed.unit,
+      unit: primaryUnit ?? secondaryUnit,
     }),
+    conflictingUnits:
+      primaryUnit !== undefined &&
+      secondaryUnit !== undefined &&
+      primaryUnit !== secondaryUnit,
     display: formatDisplayAddress(unit),
   }
 }
@@ -99,6 +108,7 @@ export function addressMatchesAppfolioUnit(
     unitRequired,
   }
   const needsReview =
+    normalizedUnit.conflictingUnits ||
     normalizedUnit.street === undefined ||
     normalizedUnit.city === undefined ||
     (unitRequired && normalizedInput.unit === undefined)

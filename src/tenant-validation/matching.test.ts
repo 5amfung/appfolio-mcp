@@ -312,6 +312,107 @@ describe('production address policy', () => {
     })
   })
 
+  it.each([
+    'Apt 709',
+    'Apartment #709',
+    'Unit 709',
+    'Suite 709',
+    'Ste 709',
+    'Room 709',
+    'Rm 709',
+    '#709',
+  ])('accepts and requires the apartment from Address2 %s', (address2) => {
+    const units = [
+      { ...unit, Address1: '960 Market Street', Address2: address2 },
+    ]
+    expect(evaluate(input, [tenant], units)).toMatchObject({
+      status: 'authenticated',
+      unit: { address: { unit: '709' } },
+      match: { address: { unitRequired: true, unitMatched: true } },
+    })
+  })
+
+  it('requires review when an apartment stored in Address2 is omitted', () => {
+    expect(
+      evaluate(
+        { ...input, address: { ...input.address, unit: undefined } },
+        [tenant],
+        [{ ...unit, Address1: '960 Market Street', Address2: 'Apt 709' }],
+      ),
+    ).toMatchObject({
+      status: 'needs_review',
+      error: { failureClass: 'ambiguous_match' },
+      match: { address: { unitRequired: true, unitMatched: false } },
+    })
+  })
+
+  it('rejects the wrong apartment when the expected unit is stored in Address2', () => {
+    expect(
+      evaluate(
+        { ...input, address: { ...input.address, unit: '710' } },
+        [tenant],
+        [{ ...unit, Address1: '960 Market Street', Address2: 'Apt 709' }],
+      ),
+    ).toMatchObject({
+      status: 'not_authenticated',
+      error: { failureClass: 'address_mismatch' },
+    })
+  })
+
+  it.each(['Upper Unit', 'Lower Unit'])(
+    'matches a directional apartment stored in Address2 %s',
+    (address2) => {
+      expect(
+        evaluate(
+          { ...input, address: { ...input.address, unit: address2 } },
+          [tenant],
+          [{ ...unit, Address1: '960 Market Street', Address2: address2 }],
+        ),
+      ).toMatchObject({
+        status: 'authenticated',
+        match: { address: { unitRequired: true, unitMatched: true } },
+      })
+    },
+  )
+
+  it('accepts equivalent apartment identifiers repeated on both address lines', () => {
+    expect(
+      evaluate(input, [tenant], [{ ...unit, Address2: 'Apartment #709' }]),
+    ).toMatchObject({ status: 'authenticated' })
+  })
+
+  it.each(['709', '710', undefined])(
+    'requires review for conflicting address-line units when supplied %s',
+    (supplied) => {
+      expect(
+        evaluate(
+          { ...input, address: { ...input.address, unit: supplied } },
+          [tenant],
+          [{ ...unit, Address2: 'Apt 710' }],
+        ),
+      ).toMatchObject({
+        status: 'needs_review',
+        error: { failureClass: 'ambiguous_match' },
+      })
+    },
+  )
+
+  it.each([undefined, null, '', '  ', 'Rear building', 'Building B'])(
+    'does not invent an apartment from an unrecognized Address2 %s',
+    (address2) => {
+      expect(
+        evaluate(
+          { ...input, address: { ...input.address, unit: undefined } },
+          [tenant],
+          [{ ...unit, Address1: '960 Market Street', Address2: address2 }],
+        ),
+      ).toMatchObject({
+        status: 'authenticated',
+        match: { address: { unitRequired: false } },
+      })
+    },
+  )
+
   it('rejects a different unit and a different city', () => {
     for (const address of [
       { ...input.address, unit: '710' },

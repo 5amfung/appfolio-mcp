@@ -74,7 +74,7 @@ export const validateTenantInputSchema = z
           .nullable()
           .optional()
           .describe(
-            'Apartment or unit identifier, required when the AppFolio street address includes one. Null means omitted.',
+            'Apartment or unit identifier, required when the AppFolio address includes one. Null means omitted.',
           ),
         state: nonBlank
           .optional()
