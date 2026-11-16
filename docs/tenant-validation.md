@@ -52,18 +52,106 @@ Reproduce the local check with
 
 ## Tool boundaries
 
-The generated API catalog stays at 181 operations. The handwritten tools are
-registered separately. Pure tenant and address matching owns the evidence rules;
+The generated API catalog stays at 181 operations. The handwritten
+`validate_tenant` tool is registered separately, for 182 tools in total. Pure tenant
+and address matching owns the evidence rules;
 the snapshot loader owns retrieval and caching; the MCP adapter owns schemas and
 result formatting. Shared API execution continues to own AppFolio authentication,
 grant binding, response validation, and mutation retry identity.
 
-`create_work_order` accepts `description`, `occupancyId`, `priority`, and an
-optional `idempotencyKey`. It reuses the existing `createWorkOrder` operation with
-`PermissionToEnter: false`, `Status: New`, and `Type: Internal`. It preserves
-retry metadata and ambiguous write outcomes. The general `createWorkOrder` tool
-remains available. The caller coordinates validation and creation; the wrapper
-does not enforce proof of a prior validation call.
+Use the generated `createWorkOrder` tool directly. There is no `create_work_order`
+compatibility wrapper. The caller coordinates validation and creation and supplies
+the intended work-order fields. The server does not enforce proof of a prior
+validation call or the previous wrapper's fixed defaults.
+
+## ElevenLabs maintenance workflow
+
+Configure the client to use `validate_tenant` for matching and `createWorkOrder`
+for creation. Collect the caller's first name, last name, phone number, street
+address, city, and apartment or unit identifier when applicable. Email is optional
+in the tool schema and is not needed for this workflow. State and postal code are
+also optional. Send the structured address fields rather than relying on
+`rawAddress`.
+
+For example, call `validate_tenant` with:
+
+```json
+{
+  "firstName": "Avery",
+  "lastName": "Tenant",
+  "phoneNumber": "4155550101",
+  "address": {
+    "streetAddress": "960 Market Street",
+    "city": "San Francisco",
+    "unit": "709"
+  }
+}
+```
+
+Proceed only when the result has `status: "authenticated"`. Use the exact
+`tenant.occupancyId` returned by validation. `needs_more_information`,
+`needs_review`, `not_authenticated`, or `service_unavailable` must not lead to a
+creation call. An `authenticated` result always includes the required occupancy
+UUID; a missing occupancy produces review instead of success.
+
+Keep the existing conversation's maintenance-description and priority-selection
+rules. Supply a priority of `Urgent`, `Normal`, or `Low`; the tool does not choose
+it. Call
+`createWorkOrder` with the following shape, replacing the illustrative occupancy
+UUID with `tenant.occupancyId`:
+
+```json
+{
+  "body": {
+    "JobDescription": "Repair the leaking kitchen faucet.",
+    "OccupancyId": "33333333-3333-4333-8333-333333333333",
+    "Priority": "Normal",
+    "PermissionToEnter": false,
+    "Status": "New",
+    "Type": "Internal"
+  },
+  "idempotencyKey": "maintenance-request-123"
+}
+```
+
+These fields preserve the previous production behavior, but the caller now owns
+their values. In particular, send the maintenance text as `JobDescription`, not
+`Description`, and do not substitute `UnitId` or `PropertyId` when an occupancy is
+missing. Keep one stable `idempotencyKey` for each logical maintenance request.
+
+The generated tool returns the AppFolio response envelope. Confirm successful
+creation with `status: 201` and read the created identifier from `data.Id` and the
+optional link from `data.Link`. There is no `status: "created"` or
+`workOrder.id` response from a creation wrapper. Both JSON text content and
+`structuredContent` are available when an upstream response was parsed.
+
+On `status: 429`, wait according to `metadata.retryAfter` before a caller-initiated
+retry. Reuse the same key and unchanged arguments; the server does not retry
+automatically. Preserve the returned `metadata.idempotencyKey` if the server
+generated one because the caller omitted it.
+
+Local execution or transport failures can return `isError: true` with JSON text
+content rather than `structuredContent`. Inspect its `error` and retain the
+top-level `idempotencyKey`. In particular,
+`write_outcome_unknown_confirm_upstream_before_retry` means the write may already
+have completed. Confirm AppFolio before another attempt and do not start a new
+write with a new key. Treat upstream server failures or an invalid creation
+response as potentially completed writes as well.
+
+## Migration differences
+
+The previous MCP exposed two tools at `/mcp` with encoded AppFolio credentials in
+a static bearer header. This server uses `/api/mcp` and OAuth tied to a saved
+connection. Configure and test the actual client's authorization and refresh
+behavior before switching traffic; changing the URL alone is insufficient.
+
+Validation can now use a snapshot up to the configured TTL instead of reading
+AppFolio on each call, and successful validation requires a valid occupancy ID.
+Creation uses the generated tool's input and output envelope described above.
+Clients must support Streamable HTTP responses, including SSE, and inspect
+structured business status even when a tool result sets `isError`. Validate these
+paths in the actual ElevenLabs client. Deployed latency and client compatibility
+are not established by the local tests.
 
 ## Verification
 

@@ -196,12 +196,11 @@ beforeAll(async () => {
 
 describe('agent-visible MCP documentation', () => {
   it('publishes the complete operation catalog through the actual protocol', () => {
-    expect(tools.size).toBe(183)
+    expect(tools.size).toBe(182)
     expect([...tools.keys()].sort()).toEqual(
       [
         ...sourceOperations.map((operation) => operation.operationId),
         'validate_tenant',
-        'create_work_order',
       ].sort(),
     )
     for (const item of tools.values())
@@ -233,22 +232,35 @@ describe('agent-visible MCP documentation', () => {
     expect(
       validateInput({ ...evidence, connectionId: 'another-connection' }),
     ).toBe(false)
-    const creation = tool('create_work_order')
+    expect(tools.has('create_work_order')).toBe(false)
+    const creation = tool('createWorkOrder')
     expect(creation.annotations).toMatchObject({
       readOnlyHint: false,
-      destructiveHint: false,
+      destructiveHint: true,
       idempotentHint: false,
     })
     const createInput = ajv.compile(creation.inputSchema)
     const command = {
-      description: 'Repair the faucet.',
-      occupancyId: '11111111-1111-4111-8111-111111111111',
-      priority: 'Normal',
+      body: {
+        JobDescription: 'Repair the faucet.',
+        OccupancyId: '11111111-1111-4111-8111-111111111111',
+        Priority: 'Normal',
+        PermissionToEnter: false,
+        Status: 'New',
+        Type: 'Internal',
+      },
       idempotencyKey: 'maintenance-123',
     }
     expect(createInput(command)).toBe(true)
-    expect(createInput({ ...command, occupancyId: undefined })).toBe(false)
-    expect(createInput({ ...command, PermissionToEnter: true })).toBe(false)
+    expect(
+      createInput({
+        ...command,
+        body: { ...command.body, OccupancyId: undefined },
+      }),
+    ).toBe(false)
+    expect(
+      createInput({ ...command, occupancyId: command.body.OccupancyId }),
+    ).toBe(false)
   })
 
   it('advertises required occupancy UUID and Current status on validation success', () => {

@@ -32,7 +32,6 @@ import {
 } from './grants'
 import { catalog, ajv, outputContract } from '@/appfolio/contract'
 import { execute } from '@/appfolio/execute'
-import { createWorkOrder } from '@/mcp-tools/create-work-order'
 import { fixture } from '@/test/contract-fixture'
 
 let pg: PGlite
@@ -313,10 +312,18 @@ it.each(['json', 'html', 'empty', 'unreadable'])(
       clientId: 'agent',
       correlationId: 'rate-limit-fixture',
     }
+    const op = catalog.operations.find(
+      (item) => item.name === 'createWorkOrder',
+    )!
     const input = {
-      description: 'Repair the faucet.',
-      occupancyId: '11111111-1111-4111-8111-111111111111',
-      priority: 'Normal',
+      body: {
+        JobDescription: 'Repair the faucet.',
+        OccupancyId: '11111111-1111-4111-8111-111111111111',
+        Priority: 'Normal',
+        PermissionToEnter: false,
+        Status: 'New',
+        Type: 'Internal',
+      },
       idempotencyKey: 'rate-limited-request',
     }
     const requests: { body: RequestInit['body']; key: string | null }[] = []
@@ -352,10 +359,11 @@ it.each(['json', 'html', 'empty', 'unreadable'])(
           )
     })
     vi.stubGlobal('fetch', upstream)
-    const result = await createWorkOrder(input, identity)
+    const result = await execute(op, input, identity)
+    expect(result.isError).toBe(true)
     expect(result.structuredContent).toMatchObject({
-      status: 'service_unavailable',
-      error: { failureClass: 'appfolio_unavailable' },
+      status: 429,
+      data: { code: 429, message: 'AppFolio rate limit exceeded.' },
       metadata: {
         retryAfter: '30',
         idempotencyKey: input.idempotencyKey,
@@ -365,12 +373,15 @@ it.each(['json', 'html', 'empty', 'unreadable'])(
     })
     expect(JSON.stringify(result)).not.toContain('Private upstream diagnostic')
     expect(upstream).toHaveBeenCalledOnce()
-    expect(
-      (await createWorkOrder(input, identity)).structuredContent.status,
-    ).toBe('created')
+    expect((await execute(op, input, identity)).structuredContent?.status).toBe(
+      201,
+    )
     expect(requests).toHaveLength(2)
     expect(requests[0].key).toBeTruthy()
     expect(requests[0]).toEqual(requests[1])
+    expect(Buffer.from(requests[0].body as Uint8Array).toString('utf8')).toBe(
+      JSON.stringify(input.body),
+    )
   },
 )
 
@@ -415,6 +426,34 @@ it.each(['getTenants', 'createWorkOrder'])(
     expect(upstream).toHaveBeenCalledOnce()
   },
 )
+
+it('returns the direct creation error and retry key when the write outcome is unknown', async () => {
+  const { grant } = await setup()
+  const identity = {
+    userId: 'user-a',
+    grantId: grant.id,
+    clientId: 'agent',
+    correlationId: 'uncertain-creation',
+  }
+  const op = catalog.operations.find((item) => item.name === 'createWorkOrder')!
+  const input = {
+    ...(fixture(op.inputSchema) as Record<string, unknown>),
+    idempotencyKey: 'uncertain-work-order',
+  }
+  const upstream = vi.fn(async () => {
+    throw new Error('Connection interrupted')
+  })
+  vi.stubGlobal('fetch', upstream)
+  const result = await execute(op, input, identity)
+  expect(result.isError).toBe(true)
+  expect(JSON.parse(result.content[0].text)).toMatchObject({
+    error: 'write_outcome_unknown_confirm_upstream_before_retry',
+    status: 502,
+    idempotencyKey: input.idempotencyKey,
+    correlationId: identity.correlationId,
+  })
+  expect(upstream).toHaveBeenCalledOnce()
+})
 
 it('persists exact multipart and JSON bytes and keys across repeated calls', async () => {
   const { grant } = await setup()

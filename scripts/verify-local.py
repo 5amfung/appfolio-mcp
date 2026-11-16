@@ -77,7 +77,7 @@ import pathlib
 state=pathlib.Path('/tmp/mcp-verification-state.json');state.write_text(json.dumps({'tokens':tokens,'clientId':client_id,'connectionId':connection}));state.chmod(0o600)
 status,listed,_=req('/api/mcp',{'jsonrpc':'2.0','id':1,'method':'tools/list','params':{}},token)
 print('MCP list diagnostic: '+json.dumps({'status':status,'error':listed.get('error'),'resultKeys':list(listed.get('result',{})),'toolCount':len(listed.get('result',{}).get('tools',[]))}),flush=True)
-check(status==200 and len(listed.get('result',{}).get('tools',[]))==183,'authenticated discovery returns all 183 tools')
+check(status==200 and len(listed.get('result',{}).get('tools',[]))==182,'authenticated discovery returns all 182 tools')
 status,result,_=req('/api/mcp',{'jsonrpc':'2.0','id':2,'method':'tools/call','params':{'name':'getWorkOrders','arguments':{'query':{'filters':{'LastUpdatedAtFrom':'2026-11-14T00:00:00Z'},'page':{'size':1,'number':1}}}}},token)
 check(status==200 and not result.get('result',{}).get('isError',True),'live work-order retrieval through MCP')
 if os.environ.get('RUN_APPFOLIO_MUTATION_TESTS')=='1':
@@ -103,7 +103,7 @@ if os.environ.get('RUN_APPFOLIO_MUTATION_TESTS')=='1':
 status,renewed,_=req('/api/auth/oauth2/token',{'grant_type':'refresh_token','client_id':client_id,'refresh_token':tokens['refresh_token'],'resource':base+'/api/mcp'},form=True)
 check(status==200 and 'access_token' in renewed,'refresh rotates tokens automatically')
 status,listed,_=req('/api/mcp',{'jsonrpc':'2.0','id':14,'method':'tools/list'},renewed['access_token'])
-check(status==200 and len(listed.get('result',{}).get('tools',[]))==183,'renewed access token can still discover all tools')
+check(status==200 and len(listed.get('result',{}).get('tools',[]))==182,'renewed access token can still discover all tools')
 status,account,_=req('/api/account');grant=account['grants'][0]['id']
 status,_,_=req('/api/account',{'action':'revoke','id':grant})
 check(status==200,'remove authorization')

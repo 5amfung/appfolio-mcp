@@ -119,14 +119,15 @@ data array. File fields accept filename, mediaType and base64 bytes. A remote
 server cannot read a local agent file path. See the contract overrides for bounds,
 retry keys, asynchronous jobs and deprecated operation behavior.
 
-Two additional workflow tools support tenant maintenance requests. `validate_tenant`
+One additional workflow tool supports tenant maintenance requests. `validate_tenant`
 matches current tenant evidence against a shared tenant/unit snapshot and returns
 a required occupancy ID only on successful, work-order-ready validation.
-`create_work_order` preserves the narrow production creation contract while reusing
-the existing `createWorkOrder` operation. Configure snapshot lifetime with
+Use the generated `createWorkOrder` tool for creation; the MCP exposes 182 tools in
+total. The caller supplies the work-order defaults explicitly rather than relying
+on a separate creation wrapper. Configure snapshot lifetime with
 `TENANT_VALIDATION_CACHE_TTL_SECONDS`, default `43200` seconds, or 12 hours.
 See [tenant validation](docs/tenant-validation.md) for matching rules, shared-cache
-behavior, freshness, and latency verification.
+behavior, the ElevenLabs workflow, freshness, and latency verification.
 
 ## Verify
 

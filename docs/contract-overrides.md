@@ -41,9 +41,9 @@ it from its response schemas. Shared execution returns status 429 and a normaliz
 `Retry-After`, the caller's idempotency key, upstream status, and correlation ID.
 The body is canceled without parsing, so empty, HTML, or unreadable upstream error
 bodies cannot hide the rate limit. All generated tool output contracts accept
-this normalized error. No automatic retry occurs. `create_work_order` reports
-`service_unavailable` and permits a later caller-initiated retry with the same
-key and unchanged input rather than reporting an unknown write outcome.
+this normalized error. No automatic retry occurs. `createWorkOrder` returns the
+429 envelope with retry metadata, permitting a later caller-initiated retry with
+the same key and unchanged input rather than reporting an unknown write outcome.
 
 Asynchronous endpoints return their accepted JobId without polling. The server
 records the job under its originating grant, whose immutable binding identifies
@@ -91,7 +91,8 @@ The upstream file remains unchanged. Install the locked Node dependencies before
 generating or checking this catalog. Example record IDs are illustrative and must
 be replaced with records accessible through the selected connection.
 
-`src/mcp-documentation.test.ts` exercises real MCP discovery for all 181 tools and
+`src/mcp-documentation.test.ts` exercises real MCP discovery for all 181 generated
+API tools and the additional `validate_tenant` workflow, for 182 tools total. It
 checks descriptions, examples, composed alternatives, and representative valid and
 invalid calls. Filters, bodies, pagination, uploads, and retry keys are covered.
 Longer reference resources are optional; essential help is present in discovery.
