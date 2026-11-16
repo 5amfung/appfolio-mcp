@@ -50,7 +50,6 @@ function evaluate(
   units: Unit[] = [unit],
 ) {
   const result = evaluateTenant(evidence, tenants, units)
-  // Every branch must conform to the actual advertised output contract.
   expect(validateTenantOutputSchema.safeParse(result).success).toBe(true)
   return result
 }

@@ -2,9 +2,10 @@
 import { afterEach, expect, it, vi } from 'vitest'
 import { handleMcp } from './mcp-server'
 
-// Use the real auth provider with its in-memory adapter for discovery.
 vi.mock('@/db/index.server', () => ({
-  getPool: () => undefined,
+  getPool: function memoryAuthDatabase() {
+    return undefined
+  },
   getDb: vi.fn(),
 }))
 afterEach(() => vi.unstubAllEnvs())

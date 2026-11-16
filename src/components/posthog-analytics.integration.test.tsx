@@ -3,6 +3,10 @@ import { afterEach, expect, it, vi } from 'vitest'
 import posthog from 'posthog-js'
 import { PostHogAnalytics } from './posthog-analytics'
 
+function interceptPostHogTransport() {
+  vi.spyOn(posthog, '_send_request').mockImplementation(() => {})
+}
+
 afterEach(async () => {
   await posthog.shutdown()
   vi.restoreAllMocks()
@@ -25,8 +29,7 @@ it('removes SDK-derived campaign and referrer attribution from captured events',
   vi.spyOn(document, 'referrer', 'get').mockReturnValue(
     'https://private-referrer.example.com/?code=private-code',
   )
-  // Keep real SDK enrichment and before_send processing; intercept only transport.
-  vi.spyOn(posthog, '_send_request').mockImplementation(() => {})
+  interceptPostHogTransport()
   const init = vi.spyOn(posthog, 'init')
 
   render(<PostHogAnalytics />)

@@ -4,7 +4,6 @@ import { Pool, neonConfig } from '@neondatabase/serverless'
 import WebSocket from 'ws'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 
-// Managed development environments may require their inherited HTTP proxy.
 const proxy = process.env.https_proxy ?? process.env.HTTPS_PROXY
 neonConfig.webSocketConstructor = proxy
   ? class extends WebSocket {

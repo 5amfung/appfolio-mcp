@@ -21,21 +21,21 @@ import {
 } from '@/mcp-tools/validate-tenant'
 
 const schemaValidator = new AjvJsonSchemaValidator(ajv)
+function isMcpJsonSchema(
+  value: Record<string, unknown>,
+): value is Parameters<typeof fromJsonSchema>[0] {
+  return ajv.validateSchema(value) === true
+}
 function mcpSchema(value: Record<string, unknown>) {
-  if (!ajv.validateSchema(value))
+  if (!isMcpJsonSchema(value))
     throw new Error('Generated JSON Schema is invalid')
-  // AJV validates this generated boundary value before the SDK's structural type.
-  return fromJsonSchema(
-    value as Parameters<typeof fromJsonSchema>[0],
-    schemaValidator,
-  )
+  return fromJsonSchema(value, schemaValidator)
 }
 const tools = catalog.operations.map((op) => ({
   op,
   input: mcpSchema(op.inputSchema),
   output: mcpSchema(outputContract(op)),
 }))
-// Handwritten workflows are separate from the generated upstream operation catalog.
 const validateTenantSchemas = {
   input: mcpSchema(
     z.toJSONSchema(validateTenantInputSchema, {

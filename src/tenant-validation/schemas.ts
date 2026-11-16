@@ -7,7 +7,6 @@ const tenantTypeSchema = z.enum([
   'Co-signer',
 ])
 
-// Strip unrelated upstream fields before retaining a shared search snapshot.
 export const tenantSchema = z.object({
   Id: z.uuid(),
   FirstName: text,

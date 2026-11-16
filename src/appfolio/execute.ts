@@ -40,7 +40,6 @@ export class OperationError extends AppError {
   }
 }
 
-// Transport-independent execution, shared by API tools and handwritten workflows.
 export async function runOperation(
   op: Operation,
   raw: unknown,

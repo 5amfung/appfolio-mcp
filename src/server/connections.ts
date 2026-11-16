@@ -136,12 +136,15 @@ async function validateCredentials(credentials: Credentials) {
   } catch {
     throw new AppError('appfolio_connection_validation_unavailable', 502)
   }
-  // A denied operation does not invalidate otherwise valid OAuth credentials.
-  // Connections may intentionally have no work-order permissions.
-  if (!response.ok && response.status !== 403)
+  if (!response.ok && !workOrderPermissionDenied(response.status))
     throw new AppError('appfolio_connection_validation_failed')
   return token
 }
+
+function workOrderPermissionDenied(status: number) {
+  return status === 403
+}
+
 export async function saveConnection(
   userId: string,
   input: z.infer<typeof connectionInput>,
@@ -291,7 +294,6 @@ export async function connectionToken(
       continue
     }
     try {
-      // Reread after acquiring shared coordination. Credential version fences stale results.
       const current = await ownedConnection(userId, id)
       if (current.version !== locked.version) continue
       if (

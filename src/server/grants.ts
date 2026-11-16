@@ -137,7 +137,6 @@ export async function revokeGrant(userId: string, id: string) {
       .where(and(eq(grants.id, id), eq(grants.userId, userId)))
       .returning()
     if (!g) throw new AppError('authorization_not_found', 404)
-    // Durable tombstone is authoritative even if a concurrent provider request writes later.
     await tx.execute(
       sql`update "oauthRefreshToken" set revoked=now() where "referenceId"=${g.id} and "userId"=${userId}`,
     )

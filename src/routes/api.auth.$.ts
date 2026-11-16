@@ -6,6 +6,24 @@ import { privateJson } from '@/server/http'
 import { AppError } from '@/server/errors'
 import { log, finishLogs } from '@/server/logging'
 
+function oauthQueryFromBody(body: string, contentType: string | null) {
+  try {
+    const parsed: unknown = contentType?.includes('json')
+      ? JSON.parse(body)
+      : Object.fromEntries(new URLSearchParams(body))
+    if (
+      parsed &&
+      typeof parsed === 'object' &&
+      'oauth_query' in parsed &&
+      typeof parsed.oauth_query === 'string'
+    )
+      return parsed.oauth_query
+  } catch {
+    return undefined
+  }
+  return undefined
+}
+
 async function handler(request: Request) {
   const start = Date.now(),
     correlationId = crypto.randomUUID()
@@ -18,22 +36,8 @@ async function handler(request: Request) {
       )
       if (body.length > 32_768)
         return new Response('Request too large', { status: 413 })
-      try {
-        const parsed: unknown = request.headers
-          .get('content-type')
-          ?.includes('json')
-          ? JSON.parse(body)
-          : Object.fromEntries(new URLSearchParams(body))
-        if (
-          parsed &&
-          typeof parsed === 'object' &&
-          'oauth_query' in parsed &&
-          typeof parsed.oauth_query === 'string'
-        )
-          query = parsed.oauth_query
-      } catch {
-        /* Better Auth validates malformed bodies. */
-      }
+      query =
+        oauthQueryFromBody(body, request.headers.get('content-type')) ?? query
     }
     const response = await oauthContext.run(
       { requestHash: requestHash(query) },

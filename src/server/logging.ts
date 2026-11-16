@@ -1,7 +1,6 @@
 import { PostHog } from 'posthog-node'
 import { waitUntil } from '@vercel/functions'
 
-// Never accept exceptions, request bodies, arbitrary attributes, URLs or credentials.
 export type LogRecord = {
   operation: string
   outcome: 'success' | 'failure' | 'rejected'
@@ -48,14 +47,14 @@ export function log(record: LogRecord) {
       },
     })
   } catch {
-    /* Telemetry cannot replace an application result. */
+    return
   }
 }
 export async function flushLogs() {
   try {
     await client?.flush()
   } catch {
-    /* Isolate exporter failures. */
+    return
   }
 }
 export function finishLogs() {
