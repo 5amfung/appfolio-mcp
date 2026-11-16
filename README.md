@@ -120,8 +120,9 @@ server cannot read a local agent file path. See the contract overrides for bound
 retry keys, asynchronous jobs and deprecated operation behavior.
 
 One additional workflow tool supports tenant maintenance requests. `validate_tenant`
-matches current tenant evidence against a shared tenant/unit snapshot and returns
-a required occupancy ID only on successful, work-order-ready validation.
+matches first name and phone against a shared tenant inventory, then loads only
+the candidate units to verify the address. It returns a required occupancy ID
+only on successful, work-order-ready validation.
 Use the generated `createWorkOrder` tool for creation; the MCP exposes 182 tools in
 total. The caller supplies the work-order defaults explicitly rather than relying
 on a separate creation wrapper. Configure snapshot lifetime with

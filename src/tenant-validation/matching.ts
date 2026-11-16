@@ -28,20 +28,21 @@ function matchedRule(
   evidence: AppfolioTenantEvidence,
   address: ReturnType<typeof addressMatchesAppfolioUnit>,
 ): MatchedRule | undefined {
-  if (!address.matches || !evidence.firstNameMatched) return undefined
-  if (
-    evidence.lastNameMatched &&
-    evidence.emailMatched &&
-    evidence.phoneMatched
-  )
-    return 'first_last_email_phone_address'
-  if (evidence.lastNameMatched && evidence.phoneMatched)
-    return 'first_last_phone_address'
+  if (!address.matches || !evidence.firstNameMatched || !evidence.phoneMatched)
+    return undefined
   if (evidence.lastNameMatched && evidence.emailMatched)
-    return 'first_last_email_address'
-  if (evidence.emailMatched) return 'first_email_address'
-  if (evidence.phoneMatched) return 'first_phone_address'
-  return undefined
+    return 'first_last_email_phone_address'
+  if (evidence.lastNameMatched) return 'first_last_phone_address'
+  return 'first_phone_address'
+}
+
+export function findTenantCandidates(
+  input: ValidateTenantInput,
+  tenants: readonly Tenant[],
+) {
+  return findAppfolioTenantMatches(tenants, input).filter(
+    ({ evidence }) => evidence.firstNameMatched && evidence.phoneMatched,
+  )
 }
 
 export function evaluateTenant(
@@ -49,8 +50,8 @@ export function evaluateTenant(
   tenants: readonly Tenant[],
   units: readonly Unit[],
 ): ValidateTenantOutput {
-  const candidates = findAppfolioTenantMatches(tenants, input)
-  // A snapshot contains units for every tenant. Diagnostics count only this search's candidates.
+  const candidates = findTenantCandidates(input, tenants)
+  // Unit retrieval uses this same name-and-phone candidate set.
   const unitIds = new Set(candidates.map(({ tenant }) => tenant.UnitId))
   const candidateUnits = units.filter((unit) => unitIds.has(unit.Id))
   const unitsById = new Map(candidateUnits.map((unit) => [unit.Id, unit]))

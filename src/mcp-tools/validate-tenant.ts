@@ -49,7 +49,7 @@ export async function validateTenant(
     }
   } else {
     try {
-      const snapshot = await tenantSnapshot(identity)
+      const snapshot = await tenantSnapshot(identity, parsed.data)
       output = evaluateTenant(parsed.data, snapshot.tenants, snapshot.units)
       metadata = {
         ...metadata,

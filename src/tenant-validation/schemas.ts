@@ -52,14 +52,16 @@ export const validateTenantInputSchema = z
         'Optional surname. A final surname token can match an initial plus surname.',
       ),
     phoneNumber: nonBlank.describe(
-      'Tenant phone number. Matching compares digits exactly, including any country code.',
+      'Tenant phone number. Must match with the first name before unit/address verification. Matching compares digits exactly, including any country code.',
     ),
     email: z
       .string()
       .trim()
       .email()
       .optional()
-      .describe('Optional tenant email. Matching ignores case.'),
+      .describe(
+        'Optional corroborating tenant email. Matching ignores case; email cannot substitute for a phone match.',
+      ),
     address: z
       .object({
         streetAddress: nonBlank.describe(
@@ -100,8 +102,6 @@ export const validateTenantInputSchema = z
 export const matchedRuleSchema = z.enum([
   'first_last_email_phone_address',
   'first_last_phone_address',
-  'first_last_email_address',
-  'first_email_address',
   'first_phone_address',
 ])
 export type MatchedRule = z.infer<typeof matchedRuleSchema>

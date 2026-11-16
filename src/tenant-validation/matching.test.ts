@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { evaluateTenant } from './matching'
+import { evaluateTenant, findTenantCandidates } from './matching'
 import { addressMatchesAppfolioUnit } from './unit-address'
 import {
   tenantSchema,
@@ -174,10 +174,11 @@ describe('work-order-ready tenant matching', () => {
     })
   })
 
-  it('preserves acceptance on email when supplied phone mismatches', () => {
+  it('does not accept email and surname when supplied phone mismatches', () => {
     expect(evaluate({ ...input, phoneNumber: '0000000000' })).toMatchObject({
-      status: 'authenticated',
-      matchedRule: 'first_last_email_address',
+      status: 'not_authenticated',
+      error: { failureClass: 'tenant_not_found' },
+      match: { tenantCandidateCount: 0, unitCandidateCount: 0 },
     })
   })
 
@@ -187,6 +188,35 @@ describe('work-order-ready tenant matching', () => {
     ).toMatchObject({
       status: 'authenticated',
       matchedRule: 'first_phone_address',
+    })
+  })
+
+  it('accepts first name, phone and address when optional surname differs', () => {
+    expect(
+      evaluate({ ...input, lastName: 'Other', email: undefined }),
+    ).toMatchObject({
+      status: 'authenticated',
+      matchedRule: 'first_phone_address',
+      match: {
+        tenant: {
+          firstNameMatched: true,
+          phoneMatched: true,
+          lastNameMatched: false,
+        },
+      },
+    })
+  })
+
+  it('ignores an unresolved unit belonging to a name-only candidate with another phone', () => {
+    const otherPhone = {
+      ...tenant,
+      Id: '44444444-4444-4444-8444-444444444444',
+      UnitId: undefined,
+      PhoneNumbers: [{ Number: '0000000000' }],
+    }
+    expect(evaluate(input, [tenant, otherPhone])).toMatchObject({
+      status: 'authenticated',
+      match: { tenantCandidateCount: 1, unitCandidateCount: 1 },
     })
   })
 
@@ -208,6 +238,40 @@ describe('work-order-ready tenant matching', () => {
       status: 'authenticated',
       matchedRule: 'first_last_email_phone_address',
     })
+  })
+})
+
+describe('name-and-phone candidate selection', () => {
+  it('selects only tenants with both matching first name and phone before units are needed', () => {
+    const candidates = findTenantCandidates(input, [
+      tenant,
+      {
+        ...tenant,
+        Id: '44444444-4444-4444-8444-444444444444',
+        FirstName: 'Other',
+      },
+      {
+        ...tenant,
+        Id: '55555555-5555-4555-8555-555555555555',
+        PhoneNumbers: [{ Number: '0000000000' }],
+      },
+    ])
+    expect(candidates.map(({ tenant }) => tenant.Id)).toEqual([tenantId])
+  })
+
+  it.each([
+    ['different first name', { ...input, firstName: 'Other' }],
+    ['different phone', { ...input, phoneNumber: '0000000000' }],
+    [
+      'email without a matching phone',
+      { ...input, lastName: undefined, phoneNumber: '0000000000' },
+    ],
+    [
+      'first name and surname without a matching phone',
+      { ...input, email: undefined, phoneNumber: '0000000000' },
+    ],
+  ])('does not select a candidate for %s', (_name, evidence) => {
+    expect(findTenantCandidates(evidence, [tenant])).toEqual([])
   })
 })
 

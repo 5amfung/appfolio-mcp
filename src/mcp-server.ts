@@ -78,7 +78,7 @@ export function protocolHandler(identity: {
         'validate_tenant',
         {
           description:
-            'Match tenant name, phone, optional email, and rented-unit address using the authorized AppFolio connection. Success requires exactly one Current tenant-unit match and a valid occupancy ID for work-order creation. Missing occupancy or ambiguous matches require review. Inspect status and error.failureClass; only authenticated permits creating a work order with the returned occupancy ID. Matching does not verify possession of a phone number or email address.',
+            'Match the tenant first name and phone number, then verify the rented-unit street address, city, and apartment or unit when applicable. Last name and email provide optional corroboration. Success requires exactly one Current tenant-unit match and a valid occupancy ID for work-order creation. Missing occupancy or ambiguous matches require review. Inspect status and error.failureClass; only authenticated permits creating a work order with the returned occupancy ID. Matching does not verify possession of a phone number or email address.',
           inputSchema: validateTenantSchemas.input,
           outputSchema: validateTenantSchemas.output,
           annotations: {

@@ -141,7 +141,7 @@ const wireResponse = z.object({
     }),
   }),
 })
-async function protocolCall() {
+async function protocolCall(input = evidence) {
   const response = await protocolHandler(identity).fetch(
     new Request('http://localhost:3000/api/mcp', {
       method: 'POST',
@@ -154,7 +154,7 @@ async function protocolCall() {
         jsonrpc: '2.0',
         id: 1,
         method: 'tools/call',
-        params: { name: 'validate_tenant', arguments: evidence },
+        params: { name: 'validate_tenant', arguments: input },
       }),
     }),
   )
@@ -173,7 +173,7 @@ async function protocolCall() {
   return wireResponse.parse(payload).result.structuredContent
 }
 
-it('runs complete protocol validation from a shared 1000-tenant snapshot without upstream calls on hits', async () => {
+it('loads only the matched unit from a 1000-tenant inventory and makes no upstream calls on cache hits', async () => {
   const first = await protocolCall()
   expect(first.status).toBe('authenticated')
   expect(first.tenant?.occupancyId).toBe(occupancyId)
@@ -181,7 +181,10 @@ it('runs complete protocol validation from a shared 1000-tenant snapshot without
   expect(
     Date.parse(first.metadata.expiresAt) - Date.parse(first.metadata.fetchedAt),
   ).toBe(43200000)
-  expect(runOperation).toHaveBeenCalledTimes(11) // One tenant page, ten unit batches.
+  expect(runOperation).toHaveBeenCalledTimes(2) // Tenant inventory, then one matching unit.
+  expect(vi.mocked(runOperation).mock.calls[1]?.[1]).toEqual({
+    query: { filters: { Id: unitId(0) }, page: { number: 1, size: 1000 } },
+  })
   vi.mocked(runOperation).mockClear()
   const times = []
   for (let index = 0; index < 20; index++) {
@@ -196,6 +199,58 @@ it('runs complete protocol validation from a shared 1000-tenant snapshot without
   // This excludes remote Neon/Vercel latency and OAuth bearer verification.
   expect(Math.max(...times)).toBeLessThan(1000)
 }, 15000)
+
+it('does not query units when first name or phone fails to match', async () => {
+  for (const input of [
+    { ...evidence, firstName: 'Unknown' },
+    { ...evidence, phoneNumber: '4155559999' },
+  ]) {
+    const result = await protocolCall(input)
+    expect(result.status).toBe('not_authenticated')
+  }
+  expect(runOperation).toHaveBeenCalledTimes(1)
+  expect(vi.mocked(runOperation).mock.calls[0]?.[0].name).toBe('getTenants')
+})
+
+it('fetches a different matched unit lazily without downloading the tenant inventory again', async () => {
+  await protocolCall()
+  vi.mocked(runOperation).mockClear()
+  const input = {
+    ...evidence,
+    firstName: 'Resident1',
+    address: { ...evidence.address, streetAddress: '11 Market Street' },
+  }
+  expect((await protocolCall(input)).status).toBe('authenticated')
+  expect(runOperation).toHaveBeenCalledTimes(1)
+  expect(vi.mocked(runOperation).mock.calls[0]?.[0].name).toBe('getUnits')
+  expect(vi.mocked(runOperation).mock.calls[0]?.[1]).toEqual({
+    query: { filters: { Id: unitId(1) }, page: { number: 1, size: 1000 } },
+  })
+  vi.mocked(runOperation).mockClear()
+  expect((await protocolCall(input)).metadata.cache).toBe('hit')
+  expect((await protocolCall()).metadata.cache).toBe('hit')
+  expect(runOperation).not.toHaveBeenCalled()
+})
+
+it('keeps a failed unit lookup isolated from another tenant and the cached tenant inventory', async () => {
+  await protocolCall()
+  vi.mocked(runOperation)
+    .mockClear()
+    .mockRejectedValue(new Error('One unit is temporarily unavailable'))
+  const input = {
+    ...evidence,
+    firstName: 'Resident1',
+    address: { ...evidence.address, streetAddress: '11 Market Street' },
+  }
+  expect((await validateTenant(input, identity)).structuredContent.status).toBe(
+    'service_unavailable',
+  )
+  expect(runOperation).toHaveBeenCalledTimes(1)
+  expect(vi.mocked(runOperation).mock.calls[0]?.[0].name).toBe('getUnits')
+  vi.mocked(runOperation).mockClear()
+  expect((await protocolCall()).status).toBe('authenticated')
+  expect(runOperation).not.toHaveBeenCalled()
+})
 
 it('rejects a removed authorization even when its complete snapshot remains cached', async () => {
   expect(

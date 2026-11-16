@@ -385,7 +385,13 @@ it.each(['json', 'html', 'empty', 'unreadable'])(
   },
 )
 
-it.each(['getTenants', 'createWorkOrder'])(
+it.each([
+  'getTenants',
+  'createWorkOrder',
+  'updateWorkOrder',
+  'putUnitPricingMatrix',
+  'deleteWorkOrderAttachment',
+])(
   'exposes schema-valid global rate limits for %s even without an endpoint 429 schema',
   async (name) => {
     const { grant } = await setup()
@@ -398,16 +404,21 @@ it.each(['getTenants', 'createWorkOrder'])(
     const op = catalog.operations.find((item) => item.name === name)!
     expect(op.responses['429']).toBeUndefined()
     expect(op.responses.default).toBeUndefined()
+    const mutation = ['POST', 'PATCH', 'PUT'].includes(op.method)
+    const input = fixture(op.inputSchema) as { idempotencyKey?: string }
+    if (mutation) input.idempotencyKey = 'rate-limited-write'
     const retryAfter = 'Sun, 15 Nov 2026 23:59:00 GMT'
-    const upstream = vi.fn(
-      async () =>
-        new Response(null, {
-          status: 429,
-          headers: { 'Retry-After': retryAfter },
-        }),
-    )
+    const upstream = vi.fn(async (_url: unknown, init?: RequestInit) => {
+      expect(init?.method).toBe(op.method)
+      const headers = new Headers(init?.headers)
+      expect(headers.has('Idempotency-Key')).toBe(mutation)
+      return new Response(null, {
+        status: 429,
+        headers: { 'Retry-After': retryAfter },
+      })
+    })
     vi.stubGlobal('fetch', upstream)
-    const result = await execute(op, fixture(op.inputSchema), identity)
+    const result = await execute(op, input, identity)
     expect(result.isError).toBe(true)
     expect(result.structuredContent).toMatchObject({
       status: 429,
@@ -419,6 +430,9 @@ it.each(['getTenants', 'createWorkOrder'])(
       },
     })
     const validate = ajv.compile(outputContract(op))
+    expect(result.structuredContent?.metadata.idempotencyKey).toBe(
+      input.idempotencyKey,
+    )
     expect(
       validate(result.structuredContent),
       JSON.stringify(validate.errors),
@@ -427,33 +441,36 @@ it.each(['getTenants', 'createWorkOrder'])(
   },
 )
 
-it('returns the direct creation error and retry key when the write outcome is unknown', async () => {
-  const { grant } = await setup()
-  const identity = {
-    userId: 'user-a',
-    grantId: grant.id,
-    clientId: 'agent',
-    correlationId: 'uncertain-creation',
-  }
-  const op = catalog.operations.find((item) => item.name === 'createWorkOrder')!
-  const input = {
-    ...(fixture(op.inputSchema) as Record<string, unknown>),
-    idempotencyKey: 'uncertain-work-order',
-  }
-  const upstream = vi.fn(async () => {
-    throw new Error('Connection interrupted')
-  })
-  vi.stubGlobal('fetch', upstream)
-  const result = await execute(op, input, identity)
-  expect(result.isError).toBe(true)
-  expect(JSON.parse(result.content[0].text)).toMatchObject({
-    error: 'write_outcome_unknown_confirm_upstream_before_retry',
-    status: 502,
-    idempotencyKey: input.idempotencyKey,
-    correlationId: identity.correlationId,
-  })
-  expect(upstream).toHaveBeenCalledOnce()
-})
+it.each(['createWorkOrder', 'updateWorkOrder', 'putUnitPricingMatrix'])(
+  'returns the direct %s error and retry key when the write outcome is unknown',
+  async (name) => {
+    const { grant } = await setup()
+    const identity = {
+      userId: 'user-a',
+      grantId: grant.id,
+      clientId: 'agent',
+      correlationId: 'uncertain-creation',
+    }
+    const op = catalog.operations.find((item) => item.name === name)!
+    const input = {
+      ...(fixture(op.inputSchema) as Record<string, unknown>),
+      idempotencyKey: 'uncertain-work-order',
+    }
+    const upstream = vi.fn(async () => {
+      throw new Error('Connection interrupted')
+    })
+    vi.stubGlobal('fetch', upstream)
+    const result = await execute(op, input, identity)
+    expect(result.isError).toBe(true)
+    expect(JSON.parse(result.content[0].text)).toMatchObject({
+      error: 'write_outcome_unknown_confirm_upstream_before_retry',
+      status: 502,
+      idempotencyKey: input.idempotencyKey,
+      correlationId: identity.correlationId,
+    })
+    expect(upstream).toHaveBeenCalledOnce()
+  },
+)
 
 it('persists exact multipart and JSON bytes and keys across repeated calls', async () => {
   const { grant } = await setup()

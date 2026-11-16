@@ -7,45 +7,62 @@ Missing occupancy produces `needs_review`, never a creation-ready success.
 
 ## Shared snapshot
 
-The workflow uses Vercel Runtime Cache, not function process memory. One encrypted
-snapshot contains the tenant identity fields and associated unit address fields
-needed by the matcher. It excludes unrelated tenant data. Cache keys include the
+The workflow uses Vercel Runtime Cache, not function process memory. The shared
+cache stores a complete current-tenant inventory and independent unit entries.
+Entries contain only matching fields and are encrypted. Cache keys include the
 application origin, deployment environment, owner, connection ID, credential
-version, and snapshot schema version. Independent connections never share data.
+version, resource type, and cache schema version. Independent connections never
+share data.
 
-`TENANT_VALIDATION_CACHE_TTL_SECONDS` sets the maximum snapshot age. It defaults
-to `43200` seconds, or 12 hours. Use a positive integer, at most `604800` seconds.
-Invalid configuration fails validation rather than silently using another TTL.
-Lowering the TTL also rejects previously stored snapshots that exceed the new
-age limit. Credential replacement changes the cache key. Deletion and grant
-revocation prevent access even if a cache entry remains until eviction.
+`TENANT_VALIDATION_CACHE_TTL_SECONDS` sets the maximum age of both tenant inventory
+and unit entries. It defaults to `43200` seconds, or 12 hours. Use a positive
+integer, at most `604800` seconds. Invalid configuration fails validation instead
+of silently selecting another TTL. Lowering the TTL rejects older entries
+immediately. Reads do not extend retention. Credential replacement changes the
+keys; deletion and grant revocation prevent access even while old entries remain.
 
-A cache hit makes no AppFolio requests or token-acquisition calls. A miss loads
-all current tenant pages, then the associated units in bounded batches. Only a
-complete, validated snapshot is published. Pagination has page, record, and
+The lookup sequence is:
+
+1. Load the shared tenant inventory, fetching all current-tenant pages on a miss.
+2. Find candidates whose first name and phone number match. Phone numbers come
+   from each tenant record's `PhoneNumbers` array. Surname and email can strengthen
+   the reported evidence but cannot substitute for a mismatching phone.
+3. Read unit cache entries only for those candidates' `UnitId` values. Fetch only
+   missing unit records, in batches of at most 100 IDs when multiple candidates
+   share the provided identity evidence. Do not choose the first candidate before
+   checking addresses.
+4. Verify street, city, and apartment or unit when applicable. Require exactly one
+   acceptable Current match and a valid occupancy UUID before returning success.
+
+A name or phone mismatch makes no unit request. Unit data is not prefetched into
+a portfolio-wide index. Each matching unit is cached separately; a failure to
+fetch one unit does not invalidate the tenant inventory or another unit's cache.
+Missing units are not negatively cached. They produce review and can be fetched
+again on the next attempt.
+
+Only complete, validated pages are cached. Pagination has page, record, and
 elapsed-time limits, rejects repeated paths, and cannot select arbitrary URLs.
-Failed or incomplete loads return an unavailable result, not a negative match.
-Concurrent cache misses may perform duplicate read-only fills; entries are
-published atomically and are never extended by reads.
+Partial or failed tenant loads are not cached. Unit entries are published only
+after their requested batch has completed. Concurrent misses may perform
+idempotent duplicate reads; there is no shared mutable unit-index object.
 
-Both tenants and unit addresses can remain stale for the configured TTL. The
-successful result describes the cached snapshot, not a live identity challenge.
-The workflow checks the live grant and connection before returning a result.
-It does not reread AppFolio on hits, because that would defeat the latency goal.
+Fully cached validation makes no AppFolio or token-acquisition calls. With the
+tenant inventory cached but a candidate unit uncached, validation makes only that
+unit lookup. An initial tenant-cache fill still takes several seconds. Both tenant
+and requested unit records can be stale within the configured TTL. Metadata's
+`fetchedAt` is the oldest source used and `expiresAt` is its maximum allowed age.
+The live grant and connection binding are checked before access and again before
+returning a result.
 
-The target is below one second for cache-hit validation. Empty or expired caches
-still require AppFolio reads, measured previously at several seconds. Runtime
-Cache is regional and may evict entries before their TTL. Local development uses
-the SDK's in-memory fallback, so local timing does not establish deployed cache
-latency. Deployed end-to-end timing must include OAuth validation, live grant
-checks, Runtime Cache access, and MCP serialization.
-
-The local MCP integration test on November 15, 2026 exercised 1,000 generated
-tenants and unit addresses. Twenty cache-hit calls measured 2.8 ms median and
-4.9 ms maximum in a focused run, with zero upstream calls after the fill. This
-includes actual SQL authorization in PGlite, encryption, snapshot parsing, and
-MCP request/response handling. It excludes remote Neon, hosted Runtime Cache,
-and OAuth bearer verification. These numbers do not establish production latency.
+The target is below one second for fully cached validation. Remote unit reads,
+expired tenant inventories, cache outages, regional cache misses, and evictions
+can add upstream latency. Local development uses the SDK's in-memory fallback,
+so local timing does not establish deployed latency. The integration test exercises
+20 fully cached MCP calls with 1,000 generated tenants and checks that each is
+below one second with no upstream calls. It also checks that a second tenant's
+unit is fetched lazily and that an unrelated unit failure stays isolated. This
+includes actual SQL authorization in PGlite, encryption, schemas, and MCP handling;
+it excludes remote Neon, hosted Runtime Cache, and OAuth bearer verification.
 
 Reproduce the local check with
 `pnpm exec vitest run src/mcp-tools/validate-tenant.integration.test.ts`.
@@ -54,10 +71,10 @@ Reproduce the local check with
 
 The generated API catalog stays at 181 operations. The handwritten
 `validate_tenant` tool is registered separately, for 182 tools in total. Pure tenant
-and address matching owns the evidence rules;
-the snapshot loader owns retrieval and caching; the MCP adapter owns schemas and
-result formatting. Shared API execution continues to own AppFolio authentication,
-grant binding, response validation, and mutation retry identity.
+and address matching owns the evidence rules; the tenant and unit loader owns
+retrieval and caching; the MCP adapter owns schemas and result formatting. Shared
+API execution continues to own AppFolio authentication, grant binding, response
+validation, and mutation retry identity.
 
 Use the generated `createWorkOrder` tool directly. There is no `create_work_order`
 compatibility wrapper. The caller coordinates validation and creation and supplies
@@ -67,11 +84,10 @@ validation call or the previous wrapper's fixed defaults.
 ## ElevenLabs maintenance workflow
 
 Configure the client to use `validate_tenant` for matching and `createWorkOrder`
-for creation. Collect the caller's first name, last name, phone number, street
-address, city, and apartment or unit identifier when applicable. Email is optional
-in the tool schema and is not needed for this workflow. State and postal code are
-also optional. Send the structured address fields rather than relying on
-`rawAddress`.
+for creation. Collect the caller's first name, phone number, street address, city,
+and apartment or unit identifier when applicable. Last name and email are optional
+corroborating evidence. State and postal code are also optional. Send the
+structured address fields rather than relying on `rawAddress`.
 
 For example, call `validate_tenant` with:
 
@@ -145,8 +161,9 @@ a static bearer header. This server uses `/api/mcp` and OAuth tied to a saved
 connection. Configure and test the actual client's authorization and refresh
 behavior before switching traffic; changing the URL alone is insufficient.
 
-Validation can now use a snapshot up to the configured TTL instead of reading
-AppFolio on each call, and successful validation requires a valid occupancy ID.
+Validation can now use cached tenant and lazily fetched unit records up to the
+configured TTL instead of reading AppFolio on each call, and successful validation
+requires a valid occupancy ID.
 Creation uses the generated tool's input and output envelope described above.
 Clients must support Streamable HTTP responses, including SSE, and inspect
 structured business status even when a tool result sets `isError`. Validate these
