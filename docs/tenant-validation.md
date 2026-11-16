@@ -70,6 +70,22 @@ it excludes remote Neon, hosted Runtime Cache, and OAuth bearer verification.
 Reproduce the local check with
 `pnpm exec vitest run src/mcp-tools/validate-tenant.integration.test.ts`.
 
+A separate local Vite dev-server benchmark on November 15, 2026 measured actual
+HTTP calls to `/api/mcp`, including signed bearer verification, live grant checks,
+the Neon WebSocket driver against a disposable local PGlite database, encryption,
+cache reads, matching, and MCP serialization. Each portfolio had 10 warm-up calls
+followed by 100 measured cache hits. The initial fills used generated AppFolio
+HTTP fixtures; measured hits made no upstream calls.
+
+| Current tenants | Median  | 95th percentile | Maximum |
+| --------------- | ------- | --------------- | ------- |
+| 500             | 10.3 ms | 11.4 ms         | 12.9 ms |
+| 1,000           | 11.0 ms | 12.8 ms         | 18.6 ms |
+
+These measurements confirm the local dev-server target only. The SDK uses its
+in-memory cache fallback locally, and the database is local. Hosted Runtime Cache,
+remote Neon latency, Vercel startup, and ElevenLabs authorization are excluded.
+
 ## Tool boundaries
 
 The generated API catalog stays at 181 operations. The handwritten
@@ -78,6 +94,13 @@ and address matching owns the evidence rules; the tenant and unit loader owns
 retrieval and caching; the MCP adapter owns schemas and result formatting. Shared
 API execution continues to own AppFolio authentication, grant binding, response
 validation, and mutation retry identity.
+
+Tenant and unit read responses preserve the original MCP SDK's explicit nullable
+fields. A null surname does not block matching first name, phone, and address.
+A null first name or missing matching phone cannot qualify as a candidate.
+Missing address data requires review. Response compatibility does not make UUIDs,
+non-null field types, or unknown enum values valid. See `contract-overrides.md`
+for the bounded response-field list.
 
 Use the generated `createWorkOrder` tool directly. There is no `create_work_order`
 compatibility wrapper. The caller coordinates validation and creation and supplies

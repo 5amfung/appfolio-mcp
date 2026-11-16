@@ -191,6 +191,27 @@ describe('work-order-ready tenant matching', () => {
     })
   })
 
+  it('accepts a tenant with a null stored surname using first name, phone and address', () => {
+    expect(evaluate(input, [{ ...tenant, LastName: null }])).toMatchObject({
+      status: 'authenticated',
+      tenant: { lastName: null, occupancyId },
+      match: {
+        tenant: {
+          firstNameMatched: true,
+          phoneMatched: true,
+          lastNameMatched: false,
+        },
+      },
+    })
+  })
+
+  it('does not match a tenant with a null stored first name', () => {
+    expect(evaluate(input, [{ ...tenant, FirstName: null }])).toMatchObject({
+      status: 'not_authenticated',
+      error: { failureClass: 'tenant_not_found' },
+    })
+  })
+
   it('accepts first name, phone and address when optional surname differs', () => {
     expect(
       evaluate({ ...input, lastName: 'Other', email: undefined }),

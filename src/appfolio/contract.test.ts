@@ -16,6 +16,78 @@ import {
 
 import { fixture } from '@/test/contract-fixture'
 
+const nullableReadCases = [
+  ...['FirstName', 'LastName', 'Emails', 'PhoneNumbers'].map((field) => ({
+    operation: 'getTenants',
+    field,
+    record: { [field]: null },
+  })),
+  {
+    operation: 'getTenants',
+    field: 'Emails.EmailAddress',
+    record: { Emails: [{ EmailAddress: null }] },
+  },
+  {
+    operation: 'getTenants',
+    field: 'PhoneNumbers.Number',
+    record: { PhoneNumbers: [{ Number: null }] },
+  },
+  ...['Address1', 'Address2', 'City', 'Name', 'State', 'Status', 'Zip'].map(
+    (field) => ({ operation: 'getUnits', field, record: { [field]: null } }),
+  ),
+]
+
+describe('nullable tenant and unit read responses', () => {
+  it.each(nullableReadCases)(
+    '$operation accepts null at $field in runtime and advertised output schemas',
+    ({ operation, record }) => {
+      const op = catalog.operations.find((item) => item.name === operation)
+      if (!op) throw new Error('Missing read operation')
+      const data = {
+        data: [{ Id: '11111111-1111-4111-8111-111111111111', ...record }],
+      }
+      const validate = ajv.compile(op.responses['200'])
+      expect(validate(data), JSON.stringify(validate.errors)).toBe(true)
+      const output = ajv.compile(outputContract(op))
+      expect(
+        output({
+          status: 200,
+          data,
+          metadata: {
+            upstreamStatus: 200,
+            retryAfter: null,
+            correlationId: 'nullable-read',
+          },
+        }),
+        JSON.stringify(output.errors),
+      ).toBe(true)
+    },
+  )
+
+  it.each([
+    { operation: 'getTenants', record: { Id: null } },
+    { operation: 'getTenants', record: { Id: 'not-a-uuid' } },
+    { operation: 'getTenants', record: { LastName: 123 } },
+    { operation: 'getTenants', record: { Emails: 'not-an-array' } },
+    { operation: 'getTenants', record: { Emails: [null] } },
+    { operation: 'getTenants', record: { PhoneNumbers: [{ Number: false }] } },
+    { operation: 'getTenants', record: { OccupancyId: null } },
+    { operation: 'getTenants', record: { TenantType: null } },
+    { operation: 'getUnits', record: { Id: null } },
+    { operation: 'getUnits', record: { Address2: 123 } },
+    { operation: 'getUnits', record: { PropertyId: null } },
+    { operation: 'getUnits', record: { Status: 'not-a-status' } },
+  ])(
+    'keeps $operation non-null types, UUIDs and other fields strict: $record',
+    ({ operation, record }) => {
+      const op = catalog.operations.find((item) => item.name === operation)
+      if (!op) throw new Error('Missing read operation')
+      const validate = ajv.compile(op.responses['200'])
+      expect(validate({ data: [record] })).toBe(false)
+    },
+  )
+})
+
 describe('complete operation contract', () => {
   it('contains every method and path exactly once with unique stable names', () => {
     expect(catalog.operations).toHaveLength(181)

@@ -24,6 +24,7 @@ vi.mock('@/appfolio/execute', async (original) => {
 })
 import { runOperation } from '@/appfolio/execute'
 import { protocolHandler } from '@/mcp-server'
+import { encrypt } from '@/server/crypto'
 import { validateTenant } from './validate-tenant'
 
 let pg: PGlite
@@ -125,6 +126,7 @@ beforeEach(async () => {
 })
 afterEach(() => {
   vi.unstubAllEnvs()
+  vi.unstubAllGlobals()
 })
 
 const wireResponse = z.object({
@@ -210,6 +212,100 @@ it('does not query units when first name or phone fails to match', async () => {
   }
   expect(runOperation).toHaveBeenCalledTimes(1)
   expect(vi.mocked(runOperation).mock.calls[0]?.[0].name).toBe('getTenants')
+})
+
+it('validates nullable tenant and house records through the real upstream executor, then serves cache hits', async () => {
+  const actual =
+    await vi.importActual<typeof import('@/appfolio/execute')>(
+      '@/appfolio/execute',
+    )
+  vi.mocked(runOperation).mockImplementation(actual.runOperation)
+  const selected = await pg.query<{ id: string }>(
+    'select connection_id as id from appfolio_grant where id=$1',
+    [identity.grantId],
+  )
+  const connection = selected.rows[0]
+  if (!connection) throw new Error('Expected fixture connection')
+  await pg.query(
+    'update appfolio_connection set credentials=$1,token=$2,expires_at=$3 where id=$4',
+    [
+      encrypt(
+        JSON.stringify({
+          clientId: 'fixture',
+          clientSecret: 'fixture',
+          databaseId: 'fixture',
+          developerId: 'fixture',
+        }),
+        `${connection.id}:credentials`,
+      ),
+      encrypt('fixture-upstream-token', `${connection.id}:token`),
+      new Date(Date.now() + 300000),
+      connection.id,
+    ],
+  )
+  const upstream = vi.fn(async (url: string | URL | Request) => {
+    const path = new URL(
+      typeof url === 'string' || url instanceof URL ? url : url.url,
+    ).pathname
+    if (path === '/api/v0/tenants')
+      return Response.json({
+        data: [
+          {
+            Id: tenantId(0),
+            FirstName: 'Resident0',
+            LastName: null,
+            Emails: null,
+            PhoneNumbers: [{ Number: null }, { Number: evidence.phoneNumber }],
+            UnitId: unitId(0),
+            OccupancyId: occupancyId,
+            Status: 'Current',
+          },
+          {
+            Id: tenantId(1),
+            FirstName: null,
+            LastName: null,
+            Emails: [{ EmailAddress: null }],
+            PhoneNumbers: null,
+            Status: 'Current',
+          },
+        ],
+        next_page_path: null,
+      })
+    if (path === '/api/v0/units')
+      return Response.json({
+        data: [
+          {
+            Id: unitId(0),
+            Address1: '10 Market Street',
+            Address2: null,
+            City: 'San Francisco',
+            Name: null,
+            State: null,
+            Status: null,
+            Zip: null,
+          },
+        ],
+        next_page_path: null,
+      })
+    throw new Error('Unexpected upstream request')
+  })
+  vi.stubGlobal('fetch', upstream)
+  const input = {
+    ...evidence,
+    address: { streetAddress: '10 Market St.', city: 'San Francisco' },
+  }
+  const first = await protocolCall(input)
+  expect(first.status).toBe('authenticated')
+  expect(first.tenant?.occupancyId).toBe(occupancyId)
+  expect(first.metadata.cache).toBe('miss')
+  expect(upstream).toHaveBeenCalledTimes(2)
+  upstream.mockClear()
+  vi.mocked(runOperation).mockClear()
+  const second = await protocolCall(input)
+  expect(second.status).toBe('authenticated')
+  expect(second.metadata.cache).toBe('hit')
+  expect(upstream).not.toHaveBeenCalled()
+  expect(runOperation).not.toHaveBeenCalled()
 })
 
 it('requires the Address2 apartment through MCP on a cache miss and validates it on cache hits', async () => {

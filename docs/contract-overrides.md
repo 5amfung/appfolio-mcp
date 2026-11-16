@@ -4,16 +4,29 @@ The supplied `database-api-openapi.json` is unchanged. `scripts/generate-tools.p
 implements the schema overrides below. The authentication adapter implements the
 OAuth override. Contract tests exercise every generated operation.
 
-| Source inconsistency                                                              | Implemented rule                                                                                      | Evidence                                                                           |
-| --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| Machine-readable legacy Basic security conflicts with introductory OAuth guidance | OAuth client credentials only; bearer, database and developer headers on every operation; no fallback | Live token exchange and work-order request                                         |
-| `getWorkOrders.filters` is optional but prose requires ID or updated-since        | Require `Id` or `LastUpdatedAtFrom`                                                                   | Positive and negative contract tests, live date-filtered read                      |
-| `next_page_path` is a string but prose says null on the last page                 | Accept string or null                                                                                 | Observed live response, generated response schemas                                 |
-| Inventory location PropertyId is a UUID but unattached locations return null      | Accept UUID or null for that response field                                                           | Live test record read-back                                                         |
-| `createWorkOrder.oneOf` refers to five object schemas whose IDs are all optional  | Require the corresponding ID in each branch so exactly one target is selected                         | Contract fixtures; without this rule every normal object matches multiple branches |
-| UUID query filters document comma-separated lists while using `format: uuid`      | Use an explicit comma-separated hexadecimal-ID pattern for those filters                              | Serialization and schema tests                                                     |
-| Multipart File fields describe local paths instead of a remote transfer mechanism | Tool input uses `{filename, mediaType, base64}`; adapter sends actual bytes                           | Multipart serialization and exact-byte retry tests                                 |
-| OpenAPI 3.0 `nullable`, references and object schemas without explicit type       | Convert to JSON Schema, preserve reachable definitions, infer object from properties                  | All generated input/response schemas compile                                       |
+| Source inconsistency                                                                                    | Implemented rule                                                                                                 | Evidence                                                                              |
+| ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Machine-readable legacy Basic security conflicts with introductory OAuth guidance                       | OAuth client credentials only; bearer, database and developer headers on every operation; no fallback            | Live token exchange and work-order request                                            |
+| `getWorkOrders.filters` is optional but prose requires ID or updated-since                              | Require `Id` or `LastUpdatedAtFrom`                                                                              | Positive and negative contract tests, live date-filtered read                         |
+| `next_page_path` is a string but prose says null on the last page                                       | Accept string or null                                                                                            | Observed live response, generated response schemas                                    |
+| Inventory location PropertyId is a UUID but unattached locations return null                            | Accept UUID or null for that response field                                                                      | Live test record read-back                                                            |
+| `createWorkOrder.oneOf` refers to five object schemas whose IDs are all optional                        | Require the corresponding ID in each branch so exactly one target is selected                                    | Contract fixtures; without this rule every normal object matches multiple branches    |
+| UUID query filters document comma-separated lists while using `format: uuid`                            | Use an explicit comma-separated hexadecimal-ID pattern for those filters                                         | Serialization and schema tests                                                        |
+| Multipart File fields describe local paths instead of a remote transfer mechanism                       | Tool input uses `{filename, mediaType, base64}`; adapter sends actual bytes                                      | Multipart serialization and exact-byte retry tests                                    |
+| OpenAPI 3.0 `nullable`, references and object schemas without explicit type                             | Convert to JSON Schema, preserve reachable definitions, infer object from properties                             | All generated input/response schemas compile                                          |
+| Tenant/contact and unit address fields are non-nullable in OpenAPI but nullable in the original MCP SDK | Permit the SDK's explicit nullable fields in read responses only; preserve null values and all other constraints | SDK schema comparison, positive/negative contract tests, real-executor MCP regression |
+
+The nullable read-response override covers `Tenant.FirstName`, `LastName`,
+`Emails`, `PhoneNumbers`, `Tenant.Emails.EmailAddress`,
+`Tenant.PhoneNumbers.Number`, and `Unit.Address1`, `Address2`, `City`, `Name`,
+`State`, `Status`, and `Zip`. It does not relax mutation inputs, UUID formats,
+non-null types, or enum values. For example, `Unit.Status: null` is accepted,
+but an unknown non-null status is still rejected.
+
+The original MCP SDK explicitly allows a null or omitted `LastName`. A missing
+surname supplies no surname evidence; it does not prevent a match using first
+name, phone, and address. A tenant without a matching first name or phone cannot
+pass validation, and success still requires a valid occupancy UUID.
 
 Validation of a new or changed connection includes token acquisition and a
 minimal, read-only work-order request with its database and developer headers.
