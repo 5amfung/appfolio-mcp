@@ -183,7 +183,7 @@ it('loads only the matched unit from a 1000-tenant inventory and makes no upstre
   expect(
     Date.parse(first.metadata.expiresAt) - Date.parse(first.metadata.fetchedAt),
   ).toBe(43200000)
-  expect(runOperation).toHaveBeenCalledTimes(2) // Tenant inventory, then one matching unit.
+  expect(runOperation).toHaveBeenCalledTimes(2)
   expect(vi.mocked(runOperation).mock.calls[1]?.[1]).toEqual({
     query: { filters: { Id: unitId(0) }, page: { number: 1, size: 1000 } },
   })
@@ -197,9 +197,8 @@ it('loads only the matched unit from a 1000-tenant inventory and makes no upstre
     expect(output.metadata.cache).toBe('hit')
   }
   expect(runOperation).not.toHaveBeenCalled()
-  // Local CPU, real SQL authorization, SDK cache, encryption, schemas and MCP transport.
-  // This excludes remote Neon/Vercel latency and OAuth bearer verification.
-  expect(Math.max(...times)).toBeLessThan(1000)
+  const localCacheHitBudgetMs = 1000
+  expect(Math.max(...times)).toBeLessThan(localCacheHitBudgetMs)
 }, 15000)
 
 it('does not query units when first name or phone fails to match', async () => {

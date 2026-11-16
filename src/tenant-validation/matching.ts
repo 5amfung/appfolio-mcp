@@ -51,7 +51,6 @@ export function evaluateTenant(
   units: readonly Unit[],
 ): ValidateTenantOutput {
   const candidates = findTenantCandidates(input, tenants)
-  // Unit retrieval uses this same name-and-phone candidate set.
   const unitIds = new Set(candidates.map(({ tenant }) => tenant.UnitId))
   const candidateUnits = units.filter((unit) => unitIds.has(unit.Id))
   const unitsById = new Map(candidateUnits.map((unit) => [unit.Id, unit]))
@@ -85,14 +84,12 @@ export function evaluateTenant(
       ? { address: diagnostic.address.diagnostics, tenant: diagnostic.evidence }
       : {}),
   }
-  // Preserve production precedence: unresolved candidates veto an otherwise unique match.
-  if (
-    candidates.some(
-      ({ tenant }) =>
-        tenant.Status === 'Current' &&
-        (!tenant.UnitId || !unitsById.has(tenant.UnitId)),
-    )
-  ) {
+  const unresolvedCurrentCandidate = candidates.some(
+    ({ tenant }) =>
+      tenant.Status === 'Current' &&
+      (!tenant.UnitId || !unitsById.has(tenant.UnitId)),
+  )
+  if (unresolvedCurrentCandidate) {
     return {
       status: 'needs_review',
       error: { failureClass: 'unit_not_found' },

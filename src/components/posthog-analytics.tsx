@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import type { PostHogConfig } from 'posthog-js'
 
-// URL query strings can contain OAuth codes or other sensitive values.
 function sanitizeProperties(properties: Record<string, unknown>) {
   for (const [key, value] of Object.entries(properties)) {
     // Session attribution is derived independently of save_campaign_params and
@@ -48,6 +47,10 @@ const options: Partial<PostHogConfig> = {
 
 let initialization: Promise<void> | undefined
 
+function retryAnalyticsInitialization() {
+  initialization = undefined
+}
+
 export function PostHogAnalytics() {
   useEffect(() => {
     const key = import.meta.env.VITE_POSTHOG_KEY?.trim()
@@ -62,11 +65,7 @@ export function PostHogAnalytics() {
             'https://us.i.posthog.com',
         })
       })
-      .catch(() => {
-        // Optional analytics must not interrupt the app if its SDK cannot load.
-        // A later mount can retry initialization after a failure.
-        initialization = undefined
-      })
+      .catch(retryAnalyticsInitialization)
   }, [])
 
   return null

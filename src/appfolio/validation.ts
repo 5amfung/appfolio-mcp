@@ -1,7 +1,6 @@
 import Ajv from 'ajv'
 import addFormats from 'ajv-formats'
 
-// Share the same formats between runtime validation and documentation examples.
 export const ajv = new Ajv({
   strict: false,
   allErrors: true,

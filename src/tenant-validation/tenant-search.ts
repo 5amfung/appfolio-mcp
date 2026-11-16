@@ -1,4 +1,3 @@
-// Matching rules ported from clairs-io; keep retrieval and transport outside this module.
 import type { Tenant as AppfolioTenant } from './schemas'
 
 export interface AppfolioTenantSearchCriteria {

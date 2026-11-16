@@ -1,4 +1,3 @@
-// Matching rules ported from clairs-io; keep retrieval and transport outside this module.
 import type { Unit as AppfolioUnit } from './schemas'
 
 export type AppfolioUnitAddressInput = {
@@ -64,15 +63,19 @@ const standaloneDirectionalUnitPattern = /^(lower|upper)\s+unit$/i
 const standaloneLabeledUnitPattern =
   /^(?:apt|apartment|unit|suite|ste|room|rm)\s*#?\s*([a-z0-9]+)$/i
 
+function wholeLineUnit(parsed: { street: string | undefined }) {
+  return parsed.street === ''
+}
+
 export function normalizeAppfolioUnitAddress(
   unit: AppfolioUnit,
 ): NormalizedAddress & { conflictingUnits: boolean } {
   const parsed = parseStreetAndUnit(unit.Address1)
   const secondary = parseStreetAndUnit(unit.Address2)
   const primaryUnit = normalizeUnit(parsed.unit)
-  // Only a recognized whole-line unit qualifies; Address2 can contain other text.
-  const secondaryUnit =
-    secondary.street === '' ? normalizeUnit(secondary.unit) : undefined
+  const secondaryUnit = wholeLineUnit(secondary)
+    ? normalizeUnit(secondary.unit)
+    : undefined
 
   return {
     ...normalizeAddress({

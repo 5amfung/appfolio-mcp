@@ -161,15 +161,22 @@ async function readCached<T extends { fetchedAt: number }>(
     const parsed = schema.safeParse(JSON.parse(decrypt(encrypted, key)))
     if (parsed.success && fresh(parsed.data.fetchedAt, ttl)) return parsed.data
   } catch {
-    // Includes corruption or an obsolete encryption key. Refill from AppFolio.
-    log({
-      operation: 'tenant_validation.cache_read',
-      outcome: 'failure',
-      correlation_id: identity.correlationId,
-      duration_ms: Date.now() - started,
-      error_category: 'tenant_cache_unavailable',
-    })
+    return unreadableCacheMiss(identity, started)
   }
+  return undefined
+}
+
+function unreadableCacheMiss(
+  identity: OperationIdentity,
+  started: number,
+): undefined {
+  log({
+    operation: 'tenant_validation.cache_read',
+    outcome: 'failure',
+    correlation_id: identity.correlationId,
+    duration_ms: Date.now() - started,
+    error_category: 'tenant_cache_unavailable',
+  })
   return undefined
 }
 
@@ -191,19 +198,23 @@ async function storeCached(
   try {
     await cache.set(key, encrypted, { ttl: remaining, name })
   } catch {
-    // This request can still use a complete, freshly fetched record.
-    log({
-      operation: 'tenant_validation.cache_write',
-      outcome: 'failure',
-      correlation_id: identity.correlationId,
-      duration_ms: Date.now() - started,
-      error_category: 'tenant_cache_unavailable',
-    })
+    continueWithFetchedRecord(identity, started)
   }
 }
 
-// The tenant inventory is complete; units are fetched only for name+phone matches.
-// Each unit has its own entry so unrelated failures cannot poison another lookup.
+function continueWithFetchedRecord(
+  identity: OperationIdentity,
+  started: number,
+) {
+  log({
+    operation: 'tenant_validation.cache_write',
+    outcome: 'failure',
+    correlation_id: identity.correlationId,
+    duration_ms: Date.now() - started,
+    error_category: 'tenant_cache_unavailable',
+  })
+}
+
 export async function tenantSnapshot(
   identity: OperationIdentity,
   input: ValidateTenantInput,
@@ -288,10 +299,9 @@ export async function tenantSnapshot(
     )
       throw new AppError('tenant_unit_response_mismatch', 503)
     await boundConnection(identity, connection)
-    // No negative unit cache: an absent unit can be resolved on a later attempt.
-    const entries = units.map((unit) => ({ fetchedAt, unit }))
+    const presentUnits = units.map((unit) => ({ fetchedAt, unit }))
     await Promise.all(
-      entries.map((entry) =>
+      presentUnits.map((entry) =>
         storeCached(
           cache,
           snapshotKey(identity.userId, connection, 'unit:' + entry.unit.Id),
@@ -302,19 +312,18 @@ export async function tenantSnapshot(
         ),
       ),
     )
-    unitEntries.push(...entries)
+    unitEntries.push(...presentUnits)
   }
 
   await boundConnection(identity, connection)
-  // Report the oldest source used, so metadata never overstates freshness.
-  const fetchedAt = Math.min(
+  const oldestFetchedAt = Math.min(
     inventory.fetchedAt,
     ...unitEntries.map((entry) => entry.fetchedAt),
   )
-  if (!fresh(fetchedAt, ttl))
+  if (!fresh(oldestFetchedAt, ttl))
     throw new AppError('tenant_inventory_expired_during_load', 503)
   return {
-    fetchedAt,
+    fetchedAt: oldestFetchedAt,
     tenants: inventory.tenants,
     units: unitEntries.map((entry) => entry.unit),
     cache: hit ? ('hit' as const) : ('miss' as const),

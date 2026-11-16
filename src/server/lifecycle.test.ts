@@ -249,14 +249,15 @@ it('executes every operation through binding/authentication with success and ups
     clientId: 'agent',
     correlationId: 'fixture',
   }
-  for (const op of catalog.operations) {
+  for (const op of catalog.operations.filter(
+    (operation) => operation.name !== 'getjobs',
+  )) {
     const raw = fixture(op.inputSchema) as {
       query?: Record<string, unknown>
       idempotencyKey?: string
     }
     if (op.name === 'getWorkOrders')
       raw.query = { filters: { LastUpdatedAtFrom: '2026-01-01T00:00:00Z' } }
-    if (op.name === 'getjobs') continue // requires a recorded JobId; covered separately.
     const status = Object.keys(op.responses)
       .map(Number)
       .find((n) => n >= 200 && n < 300)!
