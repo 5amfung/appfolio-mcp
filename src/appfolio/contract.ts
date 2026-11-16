@@ -44,6 +44,12 @@ export const inputSchema = z
   .strict()
 export type ToolInput = z.infer<typeof inputSchema>
 
+// Rate limits apply to every operation, even when omitted from endpoint schemas.
+export const rateLimitResponse = {
+  code: 429,
+  message: 'AppFolio rate limit exceeded.',
+}
+
 export function outputContract(op: Operation) {
   const definitions: Record<string, unknown> = {}
   const variants = Object.values(op.responses).map((response) => {
@@ -51,6 +57,15 @@ export function outputContract(op: Operation) {
     const parsed = z.record(z.string(), z.unknown()).safeParse($defs)
     if (parsed.success) Object.assign(definitions, parsed.data)
     return rest
+  })
+  variants.push({
+    type: 'object',
+    required: ['code', 'message'],
+    additionalProperties: false,
+    properties: {
+      code: { type: 'integer', const: rateLimitResponse.code },
+      message: { type: 'string', const: rateLimitResponse.message },
+    },
   })
   return {
     type: 'object',
@@ -64,7 +79,7 @@ export function outputContract(op: Operation) {
       },
       data: {
         description:
-          'Operation-specific AppFolio response body or error details.',
+          'Operation-specific AppFolio response body or error details. HTTP 429 returns a normalized rate-limit error; respect metadata.retryAfter before retrying.',
         anyOf: variants,
       },
       metadata: {

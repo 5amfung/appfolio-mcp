@@ -102,7 +102,7 @@ not established by browser login alone.
 
 ## Tools and writes
 
-Tool names are the source `operationId`. Inputs group parameters under `path`,
+The 181 generated API tool names are the source `operationId`. Inputs group parameters under `path`,
 `query`, `header`, and `body`. For example:
 
 ```json
@@ -118,6 +118,17 @@ Use that input with `getWorkOrders`. An unknown ID returns the upstream empty
 data array. File fields accept filename, mediaType and base64 bytes. A remote
 server cannot read a local agent file path. See the contract overrides for bounds,
 retry keys, asynchronous jobs and deprecated operation behavior.
+
+One additional workflow tool supports tenant maintenance requests. `validate_tenant`
+matches first name and phone against a shared tenant inventory, then loads only
+the candidate units to verify the address. It returns a required occupancy ID
+only on successful, work-order-ready validation.
+Use the generated `createWorkOrder` tool for creation; the MCP exposes 182 tools in
+total. The caller supplies the work-order defaults explicitly rather than relying
+on a separate creation wrapper. Configure snapshot lifetime with
+`TENANT_VALIDATION_CACHE_TTL_SECONDS`, default `43200` seconds, or 12 hours.
+See [tenant validation](docs/tenant-validation.md) for matching rules, shared-cache
+behavior, the ElevenLabs workflow, freshness, and latency verification.
 
 ## Verify
 

@@ -14,6 +14,11 @@ import { log, finishLogs } from '@/server/logging'
 import { privateJson, jsonBody } from '@/server/http'
 import { catalog, ajv, outputContract } from '@/appfolio/contract'
 import { execute } from '@/appfolio/execute'
+import {
+  validateTenant,
+  validateTenantInputSchema,
+  validateTenantOutputSchema,
+} from '@/mcp-tools/validate-tenant'
 
 const schemaValidator = new AjvJsonSchemaValidator(ajv)
 function mcpSchema(value: Record<string, unknown>) {
@@ -30,6 +35,19 @@ const tools = catalog.operations.map((op) => ({
   input: mcpSchema(op.inputSchema),
   output: mcpSchema(outputContract(op)),
 }))
+// Handwritten workflows are separate from the generated upstream operation catalog.
+const validateTenantSchemas = {
+  input: mcpSchema(
+    z.toJSONSchema(validateTenantInputSchema, {
+      target: 'draft-7',
+      io: 'input',
+    }),
+  ),
+  output: mcpSchema({
+    type: 'object',
+    ...z.toJSONSchema(validateTenantOutputSchema, { target: 'draft-7' }),
+  }),
+}
 
 export function protocolHandler(identity: {
   userId: string
@@ -56,6 +74,22 @@ export function protocolHandler(identity: {
           },
           async (input) => execute(op, input, identity),
         )
+      server.registerTool(
+        'validate_tenant',
+        {
+          description:
+            'Match the tenant first name and phone number, then verify the rented-unit street address, city, and apartment or unit when applicable. Last name and email provide optional corroboration. Success requires exactly one Current tenant-unit match and a valid occupancy ID for work-order creation. Missing occupancy or ambiguous matches require review. Inspect status and error.failureClass; only authenticated permits creating a work order with the returned occupancy ID. Matching does not verify possession of a phone number or email address.',
+          inputSchema: validateTenantSchemas.input,
+          outputSchema: validateTenantSchemas.output,
+          annotations: {
+            readOnlyHint: true,
+            destructiveHint: false,
+            idempotentHint: true,
+            openWorldHint: true,
+          },
+        },
+        async (input) => validateTenant(input, identity),
+      )
       return server
     },
     { legacy: 'stateless' },

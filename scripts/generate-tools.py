@@ -104,7 +104,16 @@ def documented(schema):
 
     return visit(schema)
 
-def closed(schema):
+# Read compatibility with the production SDK. These are response allowances,
+# not permission to send null in mutation inputs or to erase other constraints.
+nullable_response_fields = {
+    'Tenant': ('FirstName', 'LastName', 'Emails', 'PhoneNumbers'),
+    'Tenant.Emails': ('EmailAddress',),
+    'Tenant.PhoneNumbers': ('Number',),
+    'Unit': ('Address1', 'Address2', 'City', 'Name', 'State', 'Status', 'Zip'),
+}
+
+def closed(schema, *, response=False):
     schema = copy.deepcopy(schema)
     defs = {}
     def visit(x):
@@ -119,6 +128,10 @@ def closed(schema):
                 if key == 'InventoryLocation':
                     prop=defs[key]['properties']['PropertyId']
                     defs[key]['properties']['PropertyId']={'anyOf':[prop,{'type':'null'}]}
+                if response:
+                    for field in nullable_response_fields.get(key, ()):
+                        prop = defs[key]['properties'][field]
+                        defs[key]['properties'][field] = {'anyOf': [prop, {'type': 'null'}]}
                 visit(defs[key])
         for v in x.values(): visit(v)
     visit(schema)
@@ -183,7 +196,7 @@ for path, item in spec['paths'].items():
             schema['examples']=[{'query':{'filters':{'LastUpdatedAtFrom':'2026-01-01T00:00:00Z'},'page':{'number':1,'size':20}}}]
         if op['operationId']=='createWorkOrder':
             properties['body'].setdefault('examples',[]).append({'JobDescription':'Repair the leaking kitchen faucet.','PropertyId':'11111111-1111-4111-8111-111111111111','Priority':'Normal'})
-        responses={status: closed(convert(r.get('content',{}).get('application/json',{}).get('schema',{}))) for status,r in op['responses'].items()}
+        responses={status: closed(convert(r.get('content',{}).get('application/json',{}).get('schema',{})), response=True) for status,r in op['responses'].items()}
         if method in ('post','patch','put'):
             for status in ('400','409','422'):
                 responses.setdefault(status,{'type':'object','properties':{'code':{'type':'integer'},'message':{'type':'string'}},'required':['code','message']})

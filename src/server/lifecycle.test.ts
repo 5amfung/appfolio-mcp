@@ -30,7 +30,7 @@ import {
   revokeGrant,
   requestHash,
 } from './grants'
-import { catalog } from '@/appfolio/contract'
+import { catalog, ajv, outputContract } from '@/appfolio/contract'
 import { execute } from '@/appfolio/execute'
 import { fixture } from '@/test/contract-fixture'
 
@@ -301,6 +301,176 @@ it('executes every operation through binding/authentication with success and ups
     }
   }
 }, 120_000)
+
+it.each(['json', 'html', 'empty', 'unreadable'])(
+  'preserves a real 429 %s response and the work-order retry identity',
+  async (bodyKind) => {
+    const { grant } = await setup()
+    const identity = {
+      userId: 'user-a',
+      grantId: grant.id,
+      clientId: 'agent',
+      correlationId: 'rate-limit-fixture',
+    }
+    const op = catalog.operations.find(
+      (item) => item.name === 'createWorkOrder',
+    )!
+    const input = {
+      body: {
+        JobDescription: 'Repair the faucet.',
+        OccupancyId: '11111111-1111-4111-8111-111111111111',
+        Priority: 'Normal',
+        PermissionToEnter: false,
+        Status: 'New',
+        Type: 'Internal',
+      },
+      idempotencyKey: 'rate-limited-request',
+    }
+    const requests: { body: RequestInit['body']; key: string | null }[] = []
+    const headers = { 'Retry-After': '30' }
+    const limited =
+      bodyKind === 'json'
+        ? Response.json(
+            { code: 429, message: 'Private upstream diagnostic' },
+            { status: 429, headers },
+          )
+        : new Response(
+            bodyKind === 'html'
+              ? '<html>Rate limited</html>'
+              : bodyKind === 'unreadable'
+                ? new ReadableStream({
+                    start(controller) {
+                      controller.error(new Error('Body stream failed'))
+                    },
+                  })
+                : null,
+            { status: 429, headers },
+          )
+    const upstream = vi.fn(async (_url: unknown, init?: RequestInit) => {
+      requests.push({
+        body: init?.body,
+        key: new Headers(init?.headers).get('Idempotency-Key'),
+      })
+      return requests.length === 1
+        ? limited
+        : Response.json(
+            { Id: '22222222-2222-4222-8222-222222222222' },
+            { status: 201 },
+          )
+    })
+    vi.stubGlobal('fetch', upstream)
+    const result = await execute(op, input, identity)
+    expect(result.isError).toBe(true)
+    expect(result.structuredContent).toMatchObject({
+      status: 429,
+      data: { code: 429, message: 'AppFolio rate limit exceeded.' },
+      metadata: {
+        retryAfter: '30',
+        idempotencyKey: input.idempotencyKey,
+        upstreamStatus: 429,
+        correlationId: identity.correlationId,
+      },
+    })
+    expect(JSON.stringify(result)).not.toContain('Private upstream diagnostic')
+    expect(upstream).toHaveBeenCalledOnce()
+    expect((await execute(op, input, identity)).structuredContent?.status).toBe(
+      201,
+    )
+    expect(requests).toHaveLength(2)
+    expect(requests[0].key).toBeTruthy()
+    expect(requests[0]).toEqual(requests[1])
+    expect(Buffer.from(requests[0].body as Uint8Array).toString('utf8')).toBe(
+      JSON.stringify(input.body),
+    )
+  },
+)
+
+it.each([
+  'getTenants',
+  'createWorkOrder',
+  'updateWorkOrder',
+  'putUnitPricingMatrix',
+  'deleteWorkOrderAttachment',
+])(
+  'exposes schema-valid global rate limits for %s even without an endpoint 429 schema',
+  async (name) => {
+    const { grant } = await setup()
+    const identity = {
+      userId: 'user-a',
+      grantId: grant.id,
+      clientId: 'agent',
+      correlationId: 'rate-limit-envelope',
+    }
+    const op = catalog.operations.find((item) => item.name === name)!
+    expect(op.responses['429']).toBeUndefined()
+    expect(op.responses.default).toBeUndefined()
+    const mutation = ['POST', 'PATCH', 'PUT'].includes(op.method)
+    const input = fixture(op.inputSchema) as { idempotencyKey?: string }
+    if (mutation) input.idempotencyKey = 'rate-limited-write'
+    const retryAfter = 'Sun, 15 Nov 2026 23:59:00 GMT'
+    const upstream = vi.fn(async (_url: unknown, init?: RequestInit) => {
+      expect(init?.method).toBe(op.method)
+      const headers = new Headers(init?.headers)
+      expect(headers.has('Idempotency-Key')).toBe(mutation)
+      return new Response(null, {
+        status: 429,
+        headers: { 'Retry-After': retryAfter },
+      })
+    })
+    vi.stubGlobal('fetch', upstream)
+    const result = await execute(op, input, identity)
+    expect(result.isError).toBe(true)
+    expect(result.structuredContent).toMatchObject({
+      status: 429,
+      data: { code: 429, message: 'AppFolio rate limit exceeded.' },
+      metadata: {
+        upstreamStatus: 429,
+        retryAfter,
+        correlationId: identity.correlationId,
+      },
+    })
+    const validate = ajv.compile(outputContract(op))
+    expect(result.structuredContent?.metadata.idempotencyKey).toBe(
+      input.idempotencyKey,
+    )
+    expect(
+      validate(result.structuredContent),
+      JSON.stringify(validate.errors),
+    ).toBe(true)
+    expect(upstream).toHaveBeenCalledOnce()
+  },
+)
+
+it.each(['createWorkOrder', 'updateWorkOrder', 'putUnitPricingMatrix'])(
+  'returns the direct %s error and retry key when the write outcome is unknown',
+  async (name) => {
+    const { grant } = await setup()
+    const identity = {
+      userId: 'user-a',
+      grantId: grant.id,
+      clientId: 'agent',
+      correlationId: 'uncertain-creation',
+    }
+    const op = catalog.operations.find((item) => item.name === name)!
+    const input = {
+      ...(fixture(op.inputSchema) as Record<string, unknown>),
+      idempotencyKey: 'uncertain-work-order',
+    }
+    const upstream = vi.fn(async () => {
+      throw new Error('Connection interrupted')
+    })
+    vi.stubGlobal('fetch', upstream)
+    const result = await execute(op, input, identity)
+    expect(result.isError).toBe(true)
+    expect(JSON.parse(result.content[0].text)).toMatchObject({
+      error: 'write_outcome_unknown_confirm_upstream_before_retry',
+      status: 502,
+      idempotencyKey: input.idempotencyKey,
+      correlationId: identity.correlationId,
+    })
+    expect(upstream).toHaveBeenCalledOnce()
+  },
+)
 
 it('persists exact multipart and JSON bytes and keys across repeated calls', async () => {
   const { grant } = await setup()

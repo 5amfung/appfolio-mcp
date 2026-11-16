@@ -67,6 +67,12 @@ const publishedTool = z.object({
   name: z.string(),
   description: z.string(),
   inputSchema: schemaNode,
+  outputSchema: schemaNode,
+  annotations: z.object({
+    readOnlyHint: z.boolean(),
+    destructiveHint: z.boolean(),
+    idempotentHint: z.boolean(),
+  }),
 })
 type PublishedTool = z.infer<typeof publishedTool>
 let tools: Map<string, PublishedTool>
@@ -190,12 +196,130 @@ beforeAll(async () => {
 
 describe('agent-visible MCP documentation', () => {
   it('publishes the complete operation catalog through the actual protocol', () => {
-    expect(tools.size).toBe(181)
+    expect(tools.size).toBe(182)
     expect([...tools.keys()].sort()).toEqual(
-      sourceOperations.map((operation) => operation.operationId).sort(),
+      [
+        ...sourceOperations.map((operation) => operation.operationId),
+        'validate_tenant',
+      ].sort(),
     )
     for (const item of tools.values())
       expect(item.description.trim()).not.toBe('')
+  })
+
+  it('publishes usable custom workflow inputs and accurate annotations', () => {
+    const validation = tool('validate_tenant')
+    expect(validation.annotations).toMatchObject({
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+    })
+    expect(validation.description).toMatch(/occupancy ID|occupancy identifier/i)
+    expect(validation.description).toContain('only authenticated')
+    expect(validation.description).not.toMatch(/cache|snapshot|TTL/i)
+    const validateInput = ajv.compile(validation.inputSchema)
+    const evidence = {
+      firstName: 'Avery',
+      phoneNumber: '4155550101',
+      address: {
+        streetAddress: '960 Market St',
+        city: 'San Francisco',
+        unit: null,
+      },
+    }
+    expect(validateInput(evidence)).toBe(true)
+    expect(validateInput({ ...evidence, phoneNumber: undefined })).toBe(false)
+    expect(
+      validateInput({ ...evidence, connectionId: 'another-connection' }),
+    ).toBe(false)
+    expect(tools.has('create_work_order')).toBe(false)
+    const creation = tool('createWorkOrder')
+    expect(creation.annotations).toMatchObject({
+      readOnlyHint: false,
+      destructiveHint: true,
+      idempotentHint: false,
+    })
+    const createInput = ajv.compile(creation.inputSchema)
+    const command = {
+      body: {
+        JobDescription: 'Repair the faucet.',
+        OccupancyId: '11111111-1111-4111-8111-111111111111',
+        Priority: 'Normal',
+        PermissionToEnter: false,
+        Status: 'New',
+        Type: 'Internal',
+      },
+      idempotencyKey: 'maintenance-123',
+    }
+    expect(createInput(command)).toBe(true)
+    expect(
+      createInput({
+        ...command,
+        body: { ...command.body, OccupancyId: undefined },
+      }),
+    ).toBe(false)
+    expect(
+      createInput({ ...command, occupancyId: command.body.OccupancyId }),
+    ).toBe(false)
+  })
+
+  it('advertises required occupancy UUID and Current status on validation success', () => {
+    const validate = ajv.compile(tool('validate_tenant').outputSchema)
+    const success = {
+      status: 'authenticated',
+      message: 'Tenant matched.',
+      matchedRule: 'first_phone_address',
+      match: {
+        matchingPairCount: 1,
+        tenantCandidateCount: 1,
+        unitCandidateCount: 1,
+        matchedRule: 'first_phone_address',
+      },
+      tenant: {
+        id: '11111111-1111-4111-8111-111111111111',
+        status: 'Current',
+        occupancyId: '33333333-3333-4333-8333-333333333333',
+      },
+      unit: {
+        id: '22222222-2222-4222-8222-222222222222',
+        address: { display: '960 Market St' },
+      },
+      metadata: {
+        correlationId: 'request',
+        cache: 'hit',
+        fetchedAt: '2026-11-15T00:00:00.000Z',
+        expiresAt: '2026-11-15T12:00:00.000Z',
+      },
+    }
+    expect(validate(success)).toBe(true)
+    expect(
+      validate({
+        ...success,
+        tenant: { ...success.tenant, occupancyId: undefined },
+      }),
+    ).toBe(false)
+    expect(
+      validate({
+        ...success,
+        tenant: { ...success.tenant, occupancyId: 'invalid' },
+      }),
+    ).toBe(false)
+    expect(
+      validate({ ...success, tenant: { ...success.tenant, status: 'Past' } }),
+    ).toBe(false)
+    expect(
+      validate({
+        status: 'needs_review',
+        message: 'Missing occupancy.',
+        error: { failureClass: 'missing_occupancy_id' },
+        match: {
+          matchingPairCount: 1,
+          tenantCandidateCount: 1,
+          unitCandidateCount: 1,
+        },
+        metadata: { correlationId: 'request' },
+      }),
+    ).toBe(true)
   })
 
   it('keeps parameter-level meaning and scalar examples where agents enter values', () => {

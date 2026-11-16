@@ -8,7 +8,13 @@ import { connectionToken, readCredentials } from '@/server/connections'
 import { encrypt, decrypt } from '@/server/crypto'
 import { AppError } from '@/server/errors'
 import { log } from '@/server/logging'
-import { ajv, inputSchema, inputValidators, type Operation } from './contract'
+import {
+  ajv,
+  inputSchema,
+  inputValidators,
+  rateLimitResponse,
+  type Operation,
+} from './contract'
 import {
   serializeUrl,
   serializeBody,
@@ -16,15 +22,30 @@ import {
   boundedResponse,
 } from './request'
 
-export async function execute(
+export type OperationIdentity = {
+  userId: string
+  grantId: string
+  clientId: string
+  correlationId: string
+}
+export type ConnectionBinding = { id: string; version: number }
+export class OperationError extends AppError {
+  constructor(
+    category: string,
+    status: number,
+    readonly idempotencyKey?: string,
+    readonly upstreamStatus?: number,
+  ) {
+    super(category, status)
+  }
+}
+
+// Transport-independent execution, shared by API tools and handwritten workflows.
+export async function runOperation(
   op: Operation,
   raw: unknown,
-  identity: {
-    userId: string
-    grantId: string
-    clientId: string
-    correlationId: string
-  },
+  identity: OperationIdentity,
+  expectedConnection?: ConnectionBinding,
 ) {
   const started = Date.now()
   let key: string | undefined
@@ -36,6 +57,12 @@ export async function execute(
     const bound = await activeGrant(identity.grantId, identity.userId)
     if (bound.grant.clientId !== identity.clientId)
       throw new AppError('invalid_authorization', 401)
+    if (
+      expectedConnection &&
+      (bound.connection.id !== expectedConnection.id ||
+        bound.connection.version !== expectedConnection.version)
+    )
+      throw new AppError('connection_changed_retry', 409)
     if (op.name === 'getjobs') {
       const filters = z.object({ Id: z.string() }).parse(input.query?.filters)
       const ids = filters.Id.split(',')
@@ -157,20 +184,28 @@ export async function execute(
       )
     }
     upstreamStatus = response.status
-    const text = await boundedResponse(response)
     let data: unknown = null
-    if (text) {
-      try {
-        data = JSON.parse(text)
-      } catch {
-        throw new AppError('upstream_invalid_json', 502)
+    if (response.status === 429) {
+      // The status and headers establish the rate limit. Its body may be empty,
+      // HTML, or unreadable, and endpoint schemas often omit this global response.
+      await response.body?.cancel().catch(() => undefined)
+      data = { ...rateLimitResponse }
+    } else {
+      const text = await boundedResponse(response)
+      if (text) {
+        try {
+          data = JSON.parse(text)
+        } catch {
+          throw new AppError('upstream_invalid_json', 502)
+        }
       }
+      const responseSchema =
+        op.responses[String(response.status)] ?? op.responses.default
+      if (!responseSchema)
+        throw new AppError('upstream_undocumented_status', 502)
+      if (!ajv.validate(responseSchema, data))
+        throw new AppError('upstream_contract_mismatch', 502)
     }
-    const responseSchema =
-      op.responses[String(response.status)] ?? op.responses.default
-    if (!responseSchema) throw new AppError('upstream_undocumented_status', 502)
-    if (!ajv.validate(responseSchema, data))
-      throw new AppError('upstream_contract_mismatch', 502)
     if (response.ok && op.path.endsWith('/async')) {
       const job = z.object({ JobId: z.string().uuid() }).parse(data)
       const id = createHash('sha256')
@@ -199,11 +234,7 @@ export async function execute(
       rate_limited: response.status === 429,
       retries: 0,
     })
-    return {
-      isError: !response.ok,
-      content: [{ type: 'text' as const, text: JSON.stringify(result) }],
-      structuredContent: result,
-    }
+    return result
   } catch (error) {
     const category =
       error instanceof AppError ? error.category : 'tool_execution_failed'
@@ -217,16 +248,42 @@ export async function execute(
       upstream_status: upstreamStatus,
       retries: 0,
     })
+    throw new OperationError(
+      category,
+      error instanceof AppError ? error.status : 500,
+      key,
+      upstreamStatus,
+    )
+  }
+}
+
+export async function execute(
+  op: Operation,
+  raw: unknown,
+  identity: OperationIdentity,
+) {
+  try {
+    const result = await runOperation(op, raw, identity)
+    return {
+      isError: result.status < 200 || result.status >= 300,
+      content: [{ type: 'text' as const, text: JSON.stringify(result) }],
+      structuredContent: result,
+    }
+  } catch (error) {
+    const failure =
+      error instanceof OperationError
+        ? error
+        : new OperationError('tool_execution_failed', 500)
     return {
       isError: true,
       content: [
         {
           type: 'text' as const,
           text: JSON.stringify({
-            error: category,
-            status: error instanceof AppError ? error.status : 500,
-            idempotencyKey: key,
-            upstreamStatus,
+            error: failure.category,
+            status: failure.status,
+            idempotencyKey: failure.idempotencyKey,
+            upstreamStatus: failure.upstreamStatus,
             correlationId: identity.correlationId,
           }),
         },

@@ -43957,16 +43957,30 @@
                   "format": "uuid"
                 },
                 "FirstName": {
-                  "type": "string",
-                  "description": "The tenant's first name"
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "description": "The tenant's first name"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
                 },
                 "MiddleName": {
                   "type": "string",
                   "description": "The tenant's middle name"
                 },
                 "LastName": {
-                  "type": "string",
-                  "description": "The tenant's last name"
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "description": "The tenant's last name"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
                 },
                 "BirthDate": {
                   "type": "string",
@@ -44014,11 +44028,18 @@
                   "description": "The tenant's primary phone number"
                 },
                 "PhoneNumbers": {
-                  "type": "array",
-                  "description": "The tenant's phone number(s)",
-                  "items": {
-                    "$ref": "#/$defs/Tenant.PhoneNumbers"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "description": "The tenant's phone number(s)",
+                      "items": {
+                        "$ref": "#/$defs/Tenant.PhoneNumbers"
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
                 },
                 "Email": {
                   "deprecated": true,
@@ -44027,11 +44048,18 @@
                   "description": "The tenant's primary email address"
                 },
                 "Emails": {
-                  "type": "array",
-                  "description": "The tenant's emails",
-                  "items": {
-                    "$ref": "#/$defs/Tenant.Emails"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "description": "The tenant's emails",
+                      "items": {
+                        "$ref": "#/$defs/Tenant.Emails"
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
                 },
                 "MoveInOn": {
                   "type": "string",
@@ -44225,8 +44253,15 @@
                   "description": "The label of the phone number, e.g. 'Home'"
                 },
                 "Number": {
-                  "type": "string",
-                  "description": "The tenant's phone number"
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "description": "The tenant's phone number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
                 }
               },
               "type": "object"
@@ -44234,8 +44269,15 @@
             "Tenant.Emails": {
               "properties": {
                 "EmailAddress": {
-                  "type": "string",
-                  "description": "The tenant's email address"
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "description": "The tenant's email address"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
                 },
                 "IsPrimary": {
                   "type": "boolean",
@@ -47763,8 +47805,15 @@
                   "format": "uuid"
                 },
                 "Name": {
-                  "type": "string",
-                  "description": "The unit name as displayed in the AppFolio Property Manager"
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "description": "The unit name as displayed in the AppFolio Property Manager"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
                 },
                 "Bathrooms": {
                   "type": "string",
@@ -47802,15 +47851,22 @@
                   "description": "The unit's base market rent, representing its estimated fair market value based on current market conditions and comparable properties. This value may differ from `ListedRent`, as it does not include advertised adjustments or amenity fees. Additionally, if the unit is associated with a Unit Type, the market rent may be overridden by the unit type’s configured value."
                 },
                 "Status": {
-                  "type": "string",
-                  "enum": [
-                    "Occupied",
-                    "Vacant",
-                    "Vacant Rented",
-                    "Notice",
-                    "Notice Rented"
-                  ],
-                  "description": "The status of the unit. Vald values are \"Occupied\", \"Vacant\", \"Vacant Rented\", \"Notice\" or \"Notice Rented\".\n#### Status Options\n| Options       | Description                                                                                             |\n|---------------|---------------------------------------------------------------------------------------------------------|\n| Occupied      | The unit is currently occupied                                                                              |\n| Vacant        | The unit is vacant                                                                                          |\n| Vacant Rented | the unit is currently vacant but has an upcoming occupancy. Reference the `MoveIn` and `MoveOut` (from and to) attributes on the **Tenant** endpoint for any necessary associations. |\n| Notice        | The occupancy has communicated intent to vacate. Reference the `MoveIn` and `MoveOut` (from and to) attributes on the **Tenant** endpoint for any necessary associations.           |\n| Notice Rented | The occupancy has communicated intent to vacate, and a future occupancy is scheduled                        |"
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": [
+                        "Occupied",
+                        "Vacant",
+                        "Vacant Rented",
+                        "Notice",
+                        "Notice Rented"
+                      ],
+                      "description": "The status of the unit. Vald values are \"Occupied\", \"Vacant\", \"Vacant Rented\", \"Notice\" or \"Notice Rented\".\n#### Status Options\n| Options       | Description                                                                                             |\n|---------------|---------------------------------------------------------------------------------------------------------|\n| Occupied      | The unit is currently occupied                                                                              |\n| Vacant        | The unit is vacant                                                                                          |\n| Vacant Rented | the unit is currently vacant but has an upcoming occupancy. Reference the `MoveIn` and `MoveOut` (from and to) attributes on the **Tenant** endpoint for any necessary associations. |\n| Notice        | The occupancy has communicated intent to vacate. Reference the `MoveIn` and `MoveOut` (from and to) attributes on the **Tenant** endpoint for any necessary associations.           |\n| Notice Rented | The occupancy has communicated intent to vacate, and a future occupancy is scheduled                        |"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
                 },
                 "PropertyId": {
                   "type": "string",
@@ -47835,24 +47891,59 @@
                   "description": "A brief, informative description of the unit"
                 },
                 "Address1": {
-                  "type": "string",
-                  "description": "The primary street address of the unit"
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "description": "The primary street address of the unit"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
                 },
                 "Address2": {
-                  "type": "string",
-                  "description": "Additional street address information pertaining to the unit"
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "description": "Additional street address information pertaining to the unit"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
                 },
                 "City": {
-                  "type": "string",
-                  "description": "The city where the unit is located"
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "description": "The city where the unit is located"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
                 },
                 "State": {
-                  "type": "string",
-                  "description": "The state where the unit is located"
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "description": "The state where the unit is located"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
                 },
                 "Zip": {
-                  "type": "string",
-                  "description": "The zip code where the unit is located"
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "description": "The zip code where the unit is located"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
                 },
                 "MaintenanceNotes": {
                   "type": "string",
